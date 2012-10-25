@@ -147,6 +147,14 @@ int main(int argc, char **argv) {
                     env_testmask, strerror(errno));
             usage(argv[0]); /* doesn't return */
         }
+	/* atull hack: Some tests require that test 0x1 be run to initialize the
+	   test buffer.  So turn it on so I don't get lots of spurious 'failure'
+	   notices!!!
+	*/
+	if ((testmask & 0x7E) && !(testmask & 0x1)) {
+		printf("enabling Random Value Test (0x1) to initialize test buffer\n");
+		testmask |= 0x1;
+	}
         printf("using testmask 0x%lx\n", testmask);
     }
 
