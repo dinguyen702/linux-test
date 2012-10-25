@@ -1,0 +1,9 @@
+CC	= $(CROSS_COMPILE)gcc
+CP	= cp
+ECHO	= echo
+FIND	= find
+INSTALL = install
+LS	= ls
+PWD	= pwd
+RM	= rm
+SHELL	= /bin/bash
