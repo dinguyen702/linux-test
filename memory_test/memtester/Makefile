@@ -17,7 +17,7 @@ SOURCES		= memtester.c tests.c
 OBJECTS		= $(SOURCES:.c=.o)
 HEADERS		= memtester.h
 TARGETS     = *.o compile load auto-ccld.sh find-systype make-compile make-load systype extra-libs
-INSTALLPATH	= /usr/local
+INSTALLPATH	?= /usr/local
 
 #
 # Targets
@@ -25,9 +25,11 @@ INSTALLPATH	= /usr/local
 all: memtester
 
 install: all
-	mkdir -m 755 -p $(INSTALLPATH)/{bin,man/man8}
-	install -m 755 memtester $(INSTALLPATH)/bin/
-	gzip -c memtester.8 >memtester.8.gz ; install -m 644 memtester.8.gz $(INSTALLPATH)/man/man8/
+#	mkdir -m 755 -p $(INSTALLPATH)/{bin,man/man8}
+#	install -m 755 memtester $(INSTALLPATH)/bin/
+#	gzip -c memtester.8 >memtester.8.gz ; install -m 644 memtester.8.gz $(INSTALLPATH)/man/man8/
+	mkdir -m 755 -p $(INSTALLPATH)
+	install -m 755 memtester $(INSTALLPATH)/
 
 auto-ccld.sh: \
 conf-cc conf-ld warn-auto.sh
