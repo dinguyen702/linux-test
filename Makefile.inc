@@ -1,4 +1,5 @@
 CC	= $(CROSS_COMPILE)gcc
+CD	= cd
 CP	= cp
 ECHO	= echo
 FIND	= find
