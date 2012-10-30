@@ -8,8 +8,8 @@
 
 include Makefile.inc
 
-# Directories that have a makefile only
-DIRS	= $(shell $(FIND) . -mindepth 2 -depth -name Makefile -printf '%h\n')
+# Directories that have a makefile only.
+DIRS	= $(shell $(FIND) . -mindepth 2 -maxdepth 2 -depth -name Makefile -printf '%h\n')
 
 INSTALLPATH ?= $(shell $(PWD))/unit_tests
 
