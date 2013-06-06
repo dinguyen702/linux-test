@@ -1,13 +1,20 @@
-# Assuming that you have CROSS_COMPILE defined iff you are not building under Yocto
-ifdef CROSS_COMPILE
-CC = $(CROSS_COMPILE)gcc
-endif
+include ../Makefile.inc
 
 CFLAGS = -O0 -fno-omit-frame-pointer
 
-all:
+EXE = memtool
+OBJS = memtool.o
+PKG = memtool.tar.gz
+SRC = memtool.c Makefile
+SCRIPTS =
+
+all: $(EXE)
 	$(CC) $(CFLAGS) memtool.c -pthread -o memtool
 	@file memtool
+
+install : $(SCRIPTS) $(EXE)
+	$(INSTALL) -d $(INSTALLPATH)
+	$(INSTALL) -m755 $? $(INSTALLPATH)
 
 .PHONY : help
 help:
@@ -17,10 +24,8 @@ help:
 	@echo "make release : makes a tar ball of these sources"
 	@echo "make help    : this message"
 
-.PHONY : clean
 clean:
-	-rm -rf memtool *.o memtool.tar.gz
+	-$(RM) $(OBJS) $(EXE) $(PKG)
 
-.PHONY : release
 release: clean
-	tar czf memtool.tar.gz *.c Makefile
+	tar czf $(PKG) $(SRC)

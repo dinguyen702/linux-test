@@ -1,13 +1,20 @@
-# Assuming that you have CROSS_COMPILE defined iff you are not building under Yocto
-ifdef CROSS_COMPILE
-CC = $(CROSS_COMPILE)gcc
-endif
+include ../Makefile.inc
 
 CFLAGS = -O0 -fno-omit-frame-pointer
 
+EXE = latency
+OBJS = latency.o
+PKG = latency.tar.gz
+SRC = latency.c Makefile
+SCRIPTS =
+
 all:
 	$(CC) $(CFLAGS) latency.c -pthread -o latency 
-	@file memtool
+	@file latency
+
+install : $(SCRIPTS) $(EXE)
+	$(INSTALL) -d $(INSTALLPATH)
+	$(INSTALL) -m755 $? $(INSTALLPATH)
 
 .PHONY : help
 help:
@@ -17,10 +24,8 @@ help:
 	@echo "make release : makes a tar ball of these sources"
 	@echo "make help    : this message"
 
-.PHONY : clean
 clean:
-	-rm -rf latency *.o latency.tar.gz
+	-$(RM) $(OBJS) $(EXE) $(PKG)
 
-.PHONY : release
 release: clean
-	tar czf latency.tar.gz *.c Makefile
+	tar czf $(PKG) $(SRC)
