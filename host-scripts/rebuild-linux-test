@@ -1,0 +1,25 @@
+#!/bin/bash -x
+
+#
+# This script is a short cut for rebuilding the linux-tests
+#
+
+if [ -z "$INSTALLPATH" ]; then
+   export INSTALLPATH=/home/lavauser/nfsroot/linux-tests
+fi
+if [ ! -d "$INSTALLPATH" ]; then
+   mkdir $INSTALLPATH || exit 1
+fi   
+if [ -z "$CROSS_COMPILE" ]; then
+   export CROSS_COMPILE=/opt/gcc-linaro-arm-linux-gnueabihf-4.7-2012.11-20121123_linux/bin/arm-linux-gnueabihf-
+fi
+
+cd /home/lavauser/nfsroot/linux-test || exit 1
+
+make clean || exit 1
+make || exit 1
+make INSTALLPATH=$INSTALLPATH install || exit 1
+
+echo "linux-test build done"
+exit 0
+

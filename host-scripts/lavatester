@@ -1,0 +1,62 @@
+#!/bin/bash
+#
+# This script is kicked off by the iwatch daemon
+#
+# The args are files that are created
+#
+
+BUILDS=/home/$USER/nightlybuilds
+LOGS=/home/$USER/logs
+
+#=====================================================================
+echo "$(basename $0) run start"
+
+# Must set up some environmental stuff before running stuff with lava
+if [ -e /srv/lava/instances/altera_soc/bin/activate ]; then
+    source /srv/lava/instances/altera_soc/bin/activate
+fi
+
+# Get the path to the nightly build images from the passed args
+DONE=
+ZIMAGE=
+DTB=
+for foo in $@; do
+    foobase="$(basename $foo)"
+    case $foobase in
+#	zImage* ) ZIMAGE=$foo ;;
+#	socfpga_cyclone5.dtb ) DTB=$foo ;;
+	zzzDone ) DONE=$foo ;;
+    esac
+    echo $foo
+done
+
+if [ -z "$DONE" ]; then
+    exit 0
+fi
+
+# Copy the nightly build zImage and DTB to /tftpboot
+NB="$(dirname $DONE)"
+ZIMAGE=$NB/zImage
+DTB=$NB/socfpga_cyclone5.dtb
+
+echo "image : $ZIMAGE"
+echo "dtb   : $DTB"
+
+if [ -e "$ZIMAGE" ]; then
+    cp $ZIMAGE /tftpboot
+    chmod 777 /tftpboot/zImage
+fi
+if [ -e "$DTB" ]; then
+    cp $DTB /tftpboot
+    chmod 777 /tftpboot/socfpga_cyclone5.dtb
+fi
+
+#==========================================================
+
+# For now, just run the reboot test
+cd /home/lavauser/LAVA/lava-altera/jobfiles/
+./submit-job altera-reboot-device.json
+
+#==========================================================
+echo "$(basename $0) run end"
+echo "------------------------"

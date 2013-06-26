@@ -1,0 +1,8 @@
+<config>
+  <guard email="atull@altera.com"></guard>
+  <watchlist>
+    <title>Configuration files</title>
+    <contactpoint email="atull@altera.com"></contactpoint>
+    <path type="recursive" events="close_write" alert="off" exec="/home/lavauser/nfsroot/linux-test/host-scripts/lavatester '%f'">/home/lavauser/nightlybuilds</path>
+  </watchlist>
+</config>
