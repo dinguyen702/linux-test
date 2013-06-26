@@ -1,0 +1,153 @@
+====================================================================
+Intro: minimum pain factor to get automated testing
+====================================================================
+We have great plans for doing automated testing, but are impatient and want to
+get testing started on the cheap.  We will have to do this in stages due to
+lingering dependencies (no access to sj-git on the Linux network) and staffing
+issues.  So we have some super-short-term goals, detailed here.
+
+This is not the ideal system, but chunks of this system will be replaced as we
+get git access, etc.
+
+====================================================================
+Super Short-Term Goals in Brief (details below)
+====================================================================
+* The nightly build will scp its build results to lavauser.
+* Lavauser will be watching for the new build and will kick off a script
+* The script will get the new kernel image and device tree, and kick off
+automated testing.
+
+* This will allow us to run unit tests on kernels coming out of the nightly
+build.
+* For now, we will not automatically update the root filesystem or tests.
+
+====================================================================
+This will be replaced by better architected efforts
+====================================================================
+* The distributed nightly build is under development by Thor.
+* The distributed nightly build is not going to directly scp build results to
+lavauser.
+* The iwatch system (below) will go away. Instead, the nighly build will be
+able to kick off the automated tests.
+* Lava will gain the ability to update root filesystem images on sd cards
+* Lava will also be able to use usb blaster or JTAG
+* The linux-test unit tests will be put into the root filesystem some better
+way so that (1) they will be up to date and (2) we can do nice things like
+building kernel modules.
+
+====================================================================
+Important facts:
+====================================================================
+Lava machine:
+ host name is 'lavauser'
+ user is 'lavauser' (same)
+ ip is 137.57.160.194
+
+Nightly build machine : Alan's machine 137.57.188.23
+
+I have installed this toolchain on lavauser:
+CROSS_COMPILE=/opt/gcc-linaro-arm-linux-gnueabihf-4.7-2012.11-20121123_linux/bin
+/arm-linux-gnueabihf-
+
+====================================================================
+For your convenience
+====================================================================
+There is a script to easily ssh into lavauser (linux-infra/tools/sshlava).  So
+after you update your clone of linux-infra, you will be able to just type
+'sshlava' and have a shell into lavauser.
+
+Alan has set up ssh keys on lavauser so that the build user on Alan's box
+doesn't need a password to scp or ssh to lavauser.
+
+Also on lavauser, there are some aliases to get you to certain important
+directories:
+$ cdlt  ==> cd ~/nfsroot/linux-test
+$ cdla  ==> cd ~/LAVA/lava-altera
+$ cdlaj ==> cd ~/LAVA/lava-altera/jobfiles
+$ cdlap ==> cd ~/LAVA/lava-altera/lava-dispatcher/actions$
+
+
+====================================================================
+Nightly builds will scp build results to lavauser
+====================================================================
+The path on lavauser will be /home/lavauser/nighlybuilds
+
+A whole timestamped folder will need to be scp'ed over to the nightlybuilds
+folder.
+Actually all we need for now is the zImage and the socfpga_cyclone5.dtb.
+
+Then a zzzDone file will be scp'ed to the scp'ed timestamped folder (the
+appearance of that file will kick off the build).
+
+sample code
+DATE="$(date +%Y-%m-%d-%k%M)"
+mkdir $DATE
+cp zImage $DATE
+cp socfpga_cyclone5.dtb $DATE
+scp -r $DATE lavauser@137.57.160.194:/home/lavauser/nightlybuilds
+# send the done flag
+touch $DATE/zzzDone
+scp $DATE/zzzDone
+lavauser@137.57.160.194:/home/lavauser/nightlybuilds/$DATE/zzzDone
+
+====================================================================
+lavauser will have an iwatch daemon configured
+====================================================================
+The iwatch daemon will be watching the scp directory for the zzzDone file in a
+new folder under nightlybuilds.
+
+I installed iwatch on lavauser:
+sudo aptitude install iwatch
+
+To start the iwatch job, do:
+cd /home/lavauser/nfsroot/linux-test/host-scripts
+sudo iwatch -d -f iwatch-job.xml
+
+To stop the iwatch job, do:
+killall -9 iwatch
+
+====================================================================
+lavauser will have a script that will kick off test scripts
+====================================================================
+ Host scripts are in linux-test/host-scripts:
+  * iwatch-job.xml is a configuration script for iwatch
+  * lavatester is the script that iwatch will kick off
+    Script will copy the newly built zImage to a tftp directory
+    Script will kick off a set of unit tests
+    That's it!
+
+====================================================================
+linux-test will be cloned to a nfs mount on lavauser
+====================================================================
+On lavauser, linux-test git : /home/lavauser/nfsroot/linux-test
+The built tests are at      : /home/lavauser/nfsroot/linux-tests
+
+Method for updating linux-tests on lavauser:
+ * you can scp stuff to lavauser
+
+ * Rebuild linux-test on lavauser
+ rm -rf /home/lavauser/linux-tests/*
+ cd /home/lavauser/nfsroot/linux-test
+ git clean -fdx
+
+CROSS_COMPILE=/opt/gcc-linaro-arm-linux-gnueabihf-4.7-2012.11-20121123_linux/bin
+/arm-linux-gnueabihf- make
+
+CROSS_COMPILE=/opt/gcc-linaro-arm-linux-gnueabihf-4.7-2012.11-20121123_linux/bin
+/arm-linux-gnueabihf- make INSTALLPATH=/home/lavauser/nfsroot/linux-tests
+install
+
+====================================================================
+I updated u-boot on the board to load the kernel and dtb from tftp
+====================================================================
+The tftp directory is /tftpboot
+
+setenv ethaddr 00:11:22:33:44:23
+setenv ipaddr 137.57.160.1
+setenv serverip 137.57.160.194
+setenv bootimage zImage
+setenv tftploaddtb 'tftp ${fdtaddr} socfpga_cyclone5.dtb'
+setenv tftploadimage 'tftp ${loadaddr} ${bootimage}'
+setenv tftpboot 'run tftploadimage; run tftploaddtb; run mmcboot'; setenv
+bootcmd 'run tftpboot'
+saveenv
