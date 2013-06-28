@@ -53,9 +53,9 @@ fi
 
 #==========================================================
 
-# For now, just run the reboot test
 cd /home/lavauser/LAVA/lava-altera/jobfiles/
-./submit-job altera-reboot-device.json
+#./submit-job altera-reboot-device.json
+./submit-job memory-test.json
 
 #==========================================================
 echo "$(basename $0) run end"
