@@ -25,7 +25,7 @@ help:
 	@echo "make help    : this message"
 
 clean:
-	-$(RM) $(OBJS) $(EXE) $(PKG)
+	-$(RM) -f $(OBJS) $(EXE) $(PKG)
 
 release: clean
 	tar czf $(PKG) $(SRC)
