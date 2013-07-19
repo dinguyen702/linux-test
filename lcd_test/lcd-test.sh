@@ -2,6 +2,7 @@
 
 LCD_DEVNODE=ttyLCD0
 SLEEP_TIME=
+SYS_LCD_BRIGHTNESS=/sys/devices/soc.0/ffc04000.i2c/i2c-0/0-0028/brightness
 
 usage()
 {
@@ -40,6 +41,15 @@ display_looks_like()
     echo "$2"
     echo '================'
     delay_for_user
+}
+
+set_brightness()
+{
+    echo $1 > $SYS_LCD_BRIGHTNESS
+    bright="$(cat $SYS_LCD_BRIGHTNESS)"
+    if [ "$1" != "$bright" ]; then
+	echo "ERROR : brightness read back != brightness set"
+    fi
 }
 
 #=============================================================
@@ -96,6 +106,14 @@ display_looks_like 'We scrolled up!' 'New! New!'
 printf '\b\b\b\b' > /dev/$LCD_DEVNODE
 echo "Display will not appear changed, so it still has:"
 display_looks_like 'We scrolled up!' 'New! New!'
+
+set_brightness 4
+echo "Display will look dimmer."
+delay_for_user
+
+set_brightness 8
+echo "Display will look bright again."
+delay_for_user
 
 printf 'Improved!' > /dev/$LCD_DEVNODE
 display_looks_like 'We scrolled up!' 'New! Improved!'
