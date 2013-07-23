@@ -54,10 +54,35 @@ status_test()
     return 0
 }
 
+name_test()
+{
+    expected=$1
+
+    echo "getting status"
+    CMD="cat /sys/class/fpga/$FPGA_DEV/name"
+    echo "$CMD"
+    status=$($CMD)
+    ret=$?
+
+    if [ "$ret" != '0' ]; then
+	echo "FAIL - return code is $ret"
+	return $ret
+    fi
+
+    echo "name = $status"
+    if [ "$status" != "$expected" ]; then
+	echo "Error, expected name to be $expected."
+	return 1
+    fi
+
+    return 0
+}
+
 exit_if_error()
 {
     ret=$1
     if [ "$ret" != '0' ]; then
+	echo "FAIL"
 	exit $ret
     fi
 }
@@ -100,6 +125,9 @@ if [ -z "$RAW_IMAGE" ] || [ ! -e "$RAW_IMAGE" ]; then
     exit 1
 fi
 
+name_test 'Altera FPGA Manager'
+exit_if_error $?
+
 status_test 'power up phase'
 exit_if_error $?
 
@@ -111,4 +139,5 @@ echo
 status_test 'user mode'
 exit_if_error $?
 
+echo "PASS"
 exit 0
