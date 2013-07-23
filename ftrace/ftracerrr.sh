@@ -22,13 +22,26 @@ wiki page:
 EOF
 }
 
+check_config()
+{
+    for foo in set_ftrace_filter tracing_on current_tracer; do
+	bar=$TRACING/$foo
+	if [ ! -e $bar ]; then
+	    echo "Not found: $bar."
+	    echo "Are you sure ftrace is enabled in your kconfig?"
+	    exit 1
+	fi
+    done
+}
+
 set_functions()
 {
+    echo "Setting the set_ftrace_filter, eliminating inlined functions..."
     funcs=$1
     updated=$2
     good_list=
     for foo in $(cat $funcs); do
-	if echo $foo > /sys/kernel/debug/tracing/set_ftrace_filter; then
+	if echo $foo > $TRACING/set_ftrace_filter 2>/dev/null; then
 	    echo "GOOD - $foo"
 	    good_list="$good_list $foo"
 	else
@@ -36,13 +49,13 @@ set_functions()
 	fi
     done
     echo
-    echo "$good_list" > /sys/kernel/debug/tracing/set_ftrace_filter
+    echo "$good_list" > $TRACING/set_ftrace_filter
     echo
-    echo "final list read back:"
+    echo " * * final list read back: * *"
     if [ -z "$updated" ]; then
-	cat /sys/kernel/debug/tracing/set_ftrace_filter
+	cat $TRACING/set_ftrace_filter
     else
-	cat /sys/kernel/debug/tracing/set_ftrace_filter |tee $updated
+	cat $TRACING/set_ftrace_filter |tee $updated
     fi
 }
 
@@ -80,6 +93,8 @@ for foo in $@; do
     esac
     shift
 done
+
+check_config
 
 if [ -n "$dump" ] && [ -n "$funcs" ]; then
     echo "Please either specify dump or function list, not both"
