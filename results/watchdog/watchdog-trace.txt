@@ -1,0 +1,9 @@
+dw_wdt_get_top:25
+dw_wdt_ioctl:39
+dw_wdt_open:6
+dw_wdt_ping:77
+dw_wdt_release:3
+dw_wdt_resume:0
+dw_wdt_set_top:4
+dw_wdt_suspend:0
+dw_wdt_write:8

@@ -1,0 +1,10 @@
+dw_wdt_drv_remove
+dw_wdt_get_top
+dw_wdt_ioctl
+dw_wdt_open
+dw_wdt_ping
+dw_wdt_release
+dw_wdt_resume
+dw_wdt_set_top
+dw_wdt_suspend
+dw_wdt_write
