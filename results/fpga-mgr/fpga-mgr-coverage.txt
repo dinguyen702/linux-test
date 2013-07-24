@@ -1,6 +1,6 @@
 alt_fpga_configure_complete:17
 alt_fpga_configure_init:0
-alt_fpga_configure_write:113023
+alt_fpga_configure_write:691745
 alt_fpga_isr:5
 alt_fpga_probe:0
 alt_fpga_remove:0
@@ -9,7 +9,7 @@ alt_fpga_status:2
 alt_fpga_wait_for_state:3
 fpga_attach_mmio_transport:0
 fpga_data_readl:0
-fpga_data_writel:113019
+fpga_data_writel:691722
 fpga_detach_mmio_transport:0
 fpga_mgr_attach_transport:0
 fpga_mgr_detach_transport:0
@@ -18,7 +18,7 @@ fpga_mgr_open:0
 fpga_mgr_read:0
 fpga_mgr_release:2
 fpga_mgr_status_show:2
-fpga_mgr_write:8
+fpga_mgr_write:46
 fpga_reg_raw_readl:2
 fpga_reg_raw_writel:2
 fpga_reg_readl:10
