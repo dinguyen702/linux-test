@@ -7,6 +7,12 @@ usage()
     cat <<EOF
 $(basename $0) - set filter functions and enable/disable tracing"
 
+ -d|--dump     : stop tracing and dump the results to stdout
+ -f|--func*    : name of file that lists functions to try to trace
+ -u|--updated  : name of file to dump list of functions that were found to be
+               : tracable (i.e. not inlined by the compiler)
+ -b buff sz kb : set a larger trace buffer (in kb)
+
 usage:
   1. set the functions and start tracing
   $(basename $0) -f list-of-functions.txt -u list-of-functions-updated.txt
@@ -24,7 +30,7 @@ EOF
 
 check_config()
 {
-    for foo in set_ftrace_filter tracing_on current_tracer; do
+    for foo in set_ftrace_filter tracing_on current_tracer buffer_size_kb; do
 	bar=$TRACING/$foo
 	if [ ! -e $bar ]; then
 	    echo "Not found: $bar."
@@ -74,6 +80,14 @@ current_tracer()
     echo $1 > $TRACING/current_tracer
 }
 
+buffer_size()
+{
+    if [ -z "$1" ]; then
+	return;
+    fi
+    echo $1 > $TRACING/buffer_size_kb
+}
+
 #============================================================================
 
 if [ -z "$1" ]; then
@@ -84,12 +98,14 @@ fi
 dump=
 funcs=
 updated=
+buff_size=
 for foo in $@; do
     case $1 in
 	-h|--help ) usage; exit 1 ;;
 	-d|--dump ) dump=1 ;;
 	-f|--func* ) funcs=$2 ; shift ;;
 	-u|--updated ) updated=$2 ; shift ;;
+	-b ) buff_size=$2; shift ;;
     esac
     shift
 done
@@ -104,6 +120,7 @@ fi
 if [ -n "$funcs" ]; then
     tracing_off
     current_tracer nop
+    buffer_size $buff_size
     set_functions $funcs $updated
     current_tracer function
     tracing_on
