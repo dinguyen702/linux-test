@@ -38,6 +38,13 @@ check_config()
 	    exit 1
 	fi
     done
+
+    stats_files="$(find $TRACING/per_cpu -name 'stats')"
+    if [ -z "$stats_files" ]; then
+	echo "Not found: $TRACING/per_cpu/*/stats"
+	echo "Are you sure ftrace is enabled in your kconfig?"
+	exit 1
+    fi
 }
 
 set_functions()
@@ -88,7 +95,26 @@ buffer_size()
     echo $1 > $TRACING/buffer_size_kb
 }
 
+check_overrun()
+{
+    stats_files="$(find $TRACING/per_cpu -name 'stats')"
+    overrun_err=
+    for stats in $stats_files ; do
+	overrun="$(grep '^overrun:' $stats)"
+	if [ "$overrun" != 'overrun: 0' ]; then
+	    overrun_err=1
+	fi
+    done
+
+    if [ -n "$overrun_err" ]; then
+	echo "Trace buffer overrun.  Some trace was lost.  You may want to" >&2
+	echo "edit the most frequently called functions out of your functions" >&2
+	echo "list and run your test again." >&2
+    fi
+}
+
 #============================================================================
+
 
 if [ -z "$1" ]; then
     usage
@@ -129,6 +155,7 @@ if [ -n "$funcs" ]; then
 fi
 
 if [ -n "$dump" ]; then
+    check_overrun
     tracing_off
     cat $TRACING/trace
     exit 0
