@@ -1,0 +1,9 @@
+root@socfpga_cyclone5:~# insmod nfsroot/mtd_readtest.ko dev=0
+
+=================================================
+mtd_readtest: MTD device: 0
+mtd_readtest: not NAND flash, assume page size is 512 bytes.
+mtd_readtest: MTD device size 8388608, eraseblock size 65536, page size 512, count of eraseblocks 128, pages per eraseblock 128, OOB size 0
+mtd_readtest: testing page read
+mtd_readtest: finished
+=================================================

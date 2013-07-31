@@ -1,0 +1,34 @@
+root@socfpga_cyclone5:~# insmod nfsroot/mtd_speedtest.ko dev=0
+
+=================================================
+mtd_speedtest: MTD device: 0
+mtd_speedtest: not NAND flash, assume page size is 512 bytes.
+mtd_speedtest: MTD device size 8388608, eraseblock size 65536, page size 512, count of eraseblocks 128, pages per eraseblock 128, OOB size 0
+mtd_speedtest: testing eraseblock write speed
+mtd_speedtest: eraseblock write speed is 361 KiB/s
+mtd_speedtest: testing eraseblock read speed
+mtd_speedtest: testing page write speed
+mtd_speedtest: page write speed is 352 KiB/s
+mtd_speedtest: testing page read speed
+mtd_speedtest: page read speed is 5614 KiB/s
+mtd_speedtest: testing 2 page write speed
+mtd_speedtest: 2 page write speed is 357 KiB/s
+mtd_speedtest: testing 2 page read speed
+mtd_speedtest: 2 page read speed is 7684 KiB/s
+mtd_speedtest: Testing erase speed
+mtd_speedtest: erase speed is 91 KiB/s
+mtd_speedtest: Testing 2x multi-block erase speed
+mtd_speedtest: 2x multi-block erase speed is 91 KiB/s
+mtd_speedtest: Testing 4x multi-block erase speed
+mtd_speedtest: 4x multi-block erase speed is 91 KiB/s
+mtd_speedtest: Testing 8x multi-block erase speed
+mtd_speedtest: 8x multi-block erase speed is 91 KiB/s
+mtd_speedtest: Testing 16x multi-block erase speed
+mtd_speedtest: 16x multi-block erase speed is 91 KiB/s
+mtd_speedtest: Testing 32x multi-block erase speed
+mtd_speedtest: 32x multi-block erase speed is 91 KiB/s
+mtd_speedtest: Testing 64x multi-block erase speed
+mtd_speedtest: 64x multi-block erase speed is 91 KiB/s
+mtd_speedtest: finished
+=================================================
+root@socfpga_cyclone5:~# 

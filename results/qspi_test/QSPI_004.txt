@@ -1,0 +1,22 @@
+root@socfpga_cyclone5:~# insmod nfsroot/mtd_stresstest.ko dev=0
+
+=================================================
+mtd_stresstest: MTD device: 0
+mtd_stresstest: not NAND flash, assume page size is 512 bytes.
+mtd_stresstest: MTD device size 8388608, eraseblock size 65536, page size 512, count of eraseblocks 128, pages per eraseblock 128, OOB size 0
+mtd_stresstest: doing operations
+mtd_stresstest: 0 operations done
+
+
+mtd_stresstest: 1024 operations done
+mtd_stresstest: 2048 operations done
+mtd_stresstest: 3072 operations done
+mtd_stresstest: 4096 operations done
+mtd_stresstest: 5120 operations done
+mtd_stresstest: 6144 operations done
+mtd_stresstest: 7168 operations done
+mtd_stresstest: 8192 operations done
+mtd_stresstest: 9216 operations done
+mtd_stresstest: finished, 10000 operations done
+=================================================
+

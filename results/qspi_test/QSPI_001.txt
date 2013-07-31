@@ -1,0 +1,14 @@
+root@socfpga_cyclone5:~# ls /dev/mtd*
+ls: /dev/mtd*: No such file or directory
+root@socfpga_cyclone5:~# insmod nfsroot/spi-cadence-qspi-mod.ko
+cadence-qspi ff705000.spi: master is unqueued, this is deprecated
+m25p80 spi2.0: n25q00 (131072 Kbytes)
+2 ofpart partitions found on MTD device spi2.0
+Creating 2 MTD partitions on "spi2.0":
+0x000000000000-0x000000800000 : "Flash 0 Raw Data"
+0x000000800000-0x000008000000 : "Flash 0 jffs2 Filesystem"
+cadence-qspi ff705000.spi: Cadence QSPI controller driver
+root@socfpga_cyclone5:~# ls /dev/mtd*
+/dev/mtd0       /dev/mtd1       /dev/mtdblock0
+/dev/mtd0ro     /dev/mtd1ro     /dev/mtdblock1
+root@socfpga_cyclone5:~# 
