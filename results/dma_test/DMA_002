@@ -1,0 +1,183 @@
+root@socfpga_cyclone5:~# dmesg -c
+[    0.000000] Booting Linux on physical CPU 0x0
+[    0.000000] Initializing cgroup subsys cpuset
+[    0.000000] Linux version 3.9.0-00147-g2235159 (graham@graham-VirtualBox-Mint) (gcc version 4.7.3 20121106 (prerelease) (crosstool-NG linaro-1.13.1-4.7-2012.11-20121123 - Linaro GCC 2012.11) ) #55 SMP Thu Aug 1 08:34:25 CDT 2013
+[    0.000000] CPU: ARMv7 Processor [413fc090] revision 0 (ARMv7), cr=10c5387d
+[    0.000000] CPU: PIPT / VIPT nonaliasing data cache, VIPT aliasing instruction cache
+[    0.000000] Machine: Altera SOCFPGA, model: Altera SOCFPGA Cyclone V
+[    0.000000] Memory policy: ECC disabled, Data cache writealloc
+[    0.000000] On node 0 totalpages: 262144
+[    0.000000] free_area_init_node: node 0, pgdat 806740c0, node_mem_map 806af000
+[    0.000000]   Normal zone: 2048 pages used for memmap
+[    0.000000]   Normal zone: 0 pages reserved
+[    0.000000]   Normal zone: 262144 pages, LIFO batch:31
+[    0.000000] PERCPU: Embedded 8 pages/cpu @80ebc000 s11328 r8192 d13248 u32768
+[    0.000000] pcpu-alloc: s11328 r8192 d13248 u32768 alloc=8*4096
+[    0.000000] pcpu-alloc: [0] 0 [0] 1 
+[    0.000000] Built 1 zonelists in Zone order, mobility grouping on.  Total pages: 260096
+[    0.000000] Kernel command line: console=ttyS0,115200 root=/dev/mmcblk0p2 rw rootwait
+[    0.000000] PID hash table entries: 4096 (order: 2, 16384 bytes)
+[    0.000000] Dentry cache hash table entries: 131072 (order: 7, 524288 bytes)
+[    0.000000] Inode-cache hash table entries: 65536 (order: 6, 262144 bytes)
+[    0.000000] __ex_table already sorted, skipping sort
+[    0.000000] Memory: 1024MB = 1024MB total
+[    0.000000] Memory: 1032604k/1032604k available, 15972k reserved, 0K highmem
+[    0.000000] Virtual kernel memory layout:
+    vector  : 0xffff0000 - 0xffff1000   (   4 kB)
+    fixmap  : 0xfff00000 - 0xfffe0000   ( 896 kB)
+    vmalloc : 0xc0800000 - 0xff000000   (1000 MB)
+    lowmem  : 0x80000000 - 0xc0000000   (1024 MB)
+    modules : 0x7f000000 - 0x80000000   (  16 MB)
+      .text : 0x80008000 - 0x805f80e0   (6081 kB)
+      .init : 0x805f9000 - 0x8063ac40   ( 264 kB)
+      .data : 0x8063c000 - 0x80676518   ( 234 kB)
+       .bss : 0x80676518 - 0x806aed80   ( 227 kB)
+[    0.000000] SLUB: Genslabs=11, HWalign=64, Order=0-3, MinObjects=0, CPUs=2, Nodes=1
+[    0.000000] Hierarchical RCU implementation.
+[    0.000000] NR_IRQS:16 nr_irqs:16 16
+[    0.000000] smp_twd: clock not found -2
+[    0.000000] sched_clock: 32 bits at 100MHz, resolution 10ns, wraps every 42949ms
+[    0.000000] Console: colour dummy device 80x30
+[    0.000158] Calibrating delay loop... 1594.16 BogoMIPS (lpj=7970816)
+[    0.089739] pid_max: default: 32768 minimum: 301
+[    0.089975] Mount-cache hash table entries: 512
+[    0.094201] CPU: Testing write buffer coherency: ok
+[    0.094244] ftrace: allocating 16278 entries in 48 pages
+[    0.121343] CPU0: thread -1, cpu 0, socket 0, mpidr 80000000
+[    0.121352] Calibrating local timer... 199.90MHz.
+[    0.179821] Setting up static identity map for 0x8045c980 - 0x8045c9d8
+[    0.181825] CPU1: Booted secondary processor
+[    0.219736] CPU1: thread -1, cpu 1, socket 0, mpidr 80000001
+[    0.219827] Brought up 2 CPUs
+[    0.219844] SMP: Total of 2 processors activated (3188.32 BogoMIPS).
+[    0.219848] CPU: All CPU(s) started in SVC mode.
+[    0.220705] devtmpfs: initialized
+[    0.229299] NET: Registered protocol family 16
+[    0.230002] DMA: preallocated 256 KiB pool for atomic coherent allocations
+[    0.232949] L310 cache controller enabled
+[    0.232962] l2x0: 8 ways, CACHE_ID 0x410030c9, AUX_CTRL 0x32460000, Cache size: 524288 B
+[    0.237599] syscon ffd05000.rstmgr: syscon regmap start 0xffd05000 end 0xffd05fff registered
+[    0.237922] syscon ffc25000.sdrctl: syscon regmap start 0xffc25000 end 0xffc25fff registered
+[    0.238248] syscon ff800000.l3regs: syscon regmap start 0xff800000 end 0xff800fff registered
+[    0.239082] syscon ffd08000.sysmgr: syscon regmap start 0xffd08000 end 0xffd0bfff registered
+[    0.242215] hw-breakpoint: found 5 (+1 reserved) breakpoint and 1 watchpoint registers.
+[    0.242224] hw-breakpoint: maximum watchpoint size is 4 bytes.
+[    0.263302] bio: create slab <bio-0> at 0
+[    0.264951] FPGA Mangager framework driver
+[    0.265097] fpga bridge driver
+[    0.265924] SCSI subsystem initialized
+[    0.266777] usbcore: registered new interface driver usbfs
+[    0.266960] usbcore: registered new interface driver hub
+[    0.267173] usbcore: registered new device driver usb
+[    0.362810] lcd-comm 0-0028: LCD driver initialized
+[    0.365503] Switching to clocksource timer0
+[    0.398935] NET: Registered protocol family 2
+[    0.399623] TCP established hash table entries: 8192 (order: 4, 65536 bytes)
+[    0.399813] TCP bind hash table entries: 8192 (order: 4, 65536 bytes)
+[    0.400023] TCP: Hash tables configured (established 8192 bind 8192)
+[    0.400100] TCP: reno registered
+[    0.400119] UDP hash table entries: 512 (order: 2, 16384 bytes)
+[    0.400176] UDP-Lite hash table entries: 512 (order: 2, 16384 bytes)
+[    0.400482] NET: Registered protocol family 1
+[    0.400790] RPC: Registered named UNIX socket transport module.
+[    0.400799] RPC: Registered udp transport module.
+[    0.400805] RPC: Registered tcp transport module.
+[    0.400811] RPC: Registered tcp NFSv4.1 backchannel transport module.
+[    0.401149] hw perfevents: enabled with ARMv7 Cortex-A9 PMU driver, 7 counters available
+[    0.401238] arm-pmu arm-pmu: PMU:CTI successfully enabled
+[    0.422965] NFS: Registering the id_resolver key type
+[    0.423021] Key type id_resolver registered
+[    0.423029] Key type id_legacy registered
+[    0.423076] NTFS driver 2.1.30 [Flags: R/W].
+[    0.423765] jffs2: version 2.2. (NAND) \xffffffc2\xffffffa9 2001-2006 Red Hat, Inc.
+[    0.424911] msgmni has been set to 2016
+[    0.425422] io scheduler noop registered (default)
+[    0.433387] Serial: 8250/16550 driver, 2 ports, IRQ sharing disabled
+[    0.435105] ffc02000.serial0: ttyS0 at MMIO 0xffc02000 (irq = 194) is a 16550A
+[    0.827134] console [ttyS0] enabled
+[    0.830245] ffc03000.serial1: ttyS1 at MMIO 0xffc03000 (irq = 195) is a 16550A
+[    0.837200] altera_fpga_manager ff706000.fpgamgr: fpga manager [Altera FPGA Manager] registered as minor 0
+[    0.847383] brd: module loaded
+[    0.849192] at24 0-0051: 4096 byte 24c32 EEPROM, writable, 32 bytes/write
+[    0.855678] altera_hps2fpga_bridge fpgabridge.2: fpga bridge [hps2fpga] registered as device hps2fpga
+[    0.864684] altera_hps2fpga_bridge fpgabridge.3: fpga bridge [lshps2fpga] registered as device lwhps2fpga
+[    0.873338] altera_hps2fpga_bridge fpgabridge.4: fpga bridge [fpga2hps] registered as device fpga2hps
+[    0.884032] denali-nand-dt ff900000.nand: Dump timing register values:acc_clks: 0, re_2_we: 50, re_2_re: 50
+we_2_re: 5170, addr_2_data: 5170, rdwr_en_lo_cnt: 18
+rdwr_en_hi_cnt: 12, cs_setup_cnt: 3
+[    0.900498] No NAND device found
+[    0.903427] cadence-qspi ff705000.spi: master is unqueued, this is deprecated
+[    0.909828] m25p80 spi2.0: n25q00 (131072 Kbytes)
+[    0.913405] 2 ofpart partitions found on MTD device spi2.0
+[    0.917573] Creating 2 MTD partitions on "spi2.0":
+[    0.921096] 0x000000000000-0x000000800000 : "Flash 0 Raw Data"
+[    0.926966] 0x000000800000-0x000008000000 : "Flash 0 jffs2 Filesystem"
+[    0.933484] cadence-qspi ff705000.spi: Cadence QSPI controller driver
+[    0.939333] dw_spi_mmio fff00000.spi: master is unqueued, this is deprecated
+[    0.946202] dw_spi_mmio fff01000.spi: master is unqueued, this is deprecated
+[    0.952955] stmmac - user ID: 0x10, Synopsys ID: 0x37
+[    0.956691]  DMA HW capability register supported
+[    0.959945]  Enhanced/Alternate descriptors
+[    0.963003]  RX Checksum Offload Engine supported (type 2)
+[    0.970135]  Enable RX Mitigation via HW Watchdog Timer
+[    0.981098] libphy: stmmac: probed
+[    0.983200] eth0: PHY ID 00221611 at 4 IRQ 0 (stmmac-0:04) active
+[    0.988239] Initializing USB Mass Storage driver...
+[    0.992034] usbcore: registered new interface driver usb-storage
+[    0.996718] USB Mass Storage support registered.
+[    1.218930] Using Slave mode
+[    1.220515] dwc_otg ffb40000.usb: DWC OTG Controller
+[    1.224173] dwc_otg ffb40000.usb: new USB bus registered, assigned bus number 1
+[    1.230205] dwc_otg ffb40000.usb: irq 160, io mem 0xffb40000
+[    1.249235] Init: Port Power? op_state=b_peripheral
+[    1.253664] hub 1-0:1.0: USB hub found
+[    1.256135] hub 1-0:1.0: 1 port detected
+[    1.259814] mousedev: PS/2 mouse device common for all mice
+[    1.270180] rtc-ds1307 0-0068: rtc core: registered ds1339 as rtc0
+[    1.275188] i2c /dev entries driver
+[    1.278478] Synopsys Designware Multimedia Card Interface Driver
+[    1.283464] dwmmc_socfpga ff704000.dwmmc0: couldn't determine pwr-en, assuming pwr-en = 0
+[    1.290621] dwmmc_socfpga ff704000.dwmmc0: Using internal DMA controller.
+[    1.296242] dwmmc_socfpga ff704000.dwmmc0: DW MMC controller at irq 171, 32 bit host data width, 1024 deep fifo
+[    1.315567] mmc_host mmc0: Bus speed (slot 0) = 100000000Hz (slot req 400000Hz, actual 400000HZ div = 125)
+[    1.335609] dwmmc_socfpga ff704000.dwmmc0: 1 slots initialized
+[    1.340123] dwmmc_socfpga ff704000.dwmmc0: Version ID is 240a
+[    1.346535] ledtrig-cpu: registered to indicate activity on CPUs
+[    1.351646] usbcore: registered new interface driver usbhid
+[    1.355915] usbhid: USB HID core driver
+[    1.358743] oprofile: using arm/armv7-ca9
+[    1.361669] TCP: cubic registered
+[    1.363677] NET: Registered protocol family 17
+[    1.366847] NET: Registered protocol family 15
+[    1.370034] Key type dns_resolver registered
+[    1.373051] VFP support v0.3: implementor 41 architecture 3 part 30 variant 9 rev 4
+[    1.379408] ThumbEE CPU extension supported.
+[    1.382373] Registering SWP/SWPB emulation handler
+[    1.388119] Waiting for root device /dev/mmcblk0p2...
+[    1.454758] dwmmc_socfpga ff704000.dwmmc0: data FIFO error (status=00000800)
+[    1.460516] mmc0: problem reading SD Status register.
+[    1.490467] mmc_host mmc0: Bus speed (slot 0) = 100000000Hz (slot req 50000000Hz, actual 50000000HZ div = 1)
+[    1.499045] mmc0: new high speed SDHC card at address b368
+[    1.503619] mmcblk0: mmc0:b368 SD    15.4 GiB 
+[    1.509042]  mmcblk0: p1 p2 p3
+[    1.614283] kjournald starting.  Commit interval 5 seconds
+[    1.623453] EXT3-fs (mmcblk0p2): using internal journal
+[    1.627372] EXT3-fs (mmcblk0p2): mounted filesystem with ordered data mode
+[    1.632943] VFS: Mounted root (ext3 filesystem) on device 179:2.
+[    1.641608] devtmpfs: mounted
+[    1.643461] Freeing init memory: 260K
+[    2.238991]  ++OTG Interrupt: A-Device Timeout Change++
+[    4.388484] eth0: device MAC address 96:aa:06:4a:94:ac
+[    6.386133] libphy: stmmac-0:04 - Link is Up - 100/Full
+root@socfpga_cyclone5:~# dmesg -n 3
+root@socfpga_cyclone5:~# insmod nfsroot/pl330.ko 
+root@socfpga_cyclone5:~# insmod  nfsroot/dmatest.ko 
+root@socfpga_cyclone5:~# lsmod
+    Not tainted
+dmatest 13615 0 - Live 0x7f009000
+pl330 17430 0 - Live 0x7f000000
+root@socfpga_cyclone5:~# echo 10 >/sys/kernel/debug/dmatest/iterations
+root@socfpga_cyclone5:~# echo Y >/sys/kernel/debug/dmatest/run
+root@socfpga_cyclone5:~# dmesg|grep -c "dma0chan[0-7].*0 failures"
+8
+root@socfpga_cyclone5:~# 

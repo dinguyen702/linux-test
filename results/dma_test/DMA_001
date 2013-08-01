@@ -1,0 +1,7 @@
+root@socfpga_cyclone5:~# insmod nfsroot/pl330.ko 
+dma-pl330 ffe01000.pdma: Loaded driver for PL330 DMAC-3412784
+dma-pl330 ffe01000.pdma: 	DBUFF-512x8bytes Num_Chans-8 Num_Peri-32 Num_Events-8
+root@socfpga_cyclone5:~# lsmod
+    Not tainted
+pl330 17430 0 - Live 0x7f000000
+root@socfpga_cyclone5:~# 
