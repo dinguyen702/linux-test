@@ -1,0 +1,19 @@
+# tracer: function
+#
+# entries-in-buffer/entries-written: 8/8   #P:2
+#
+#                              _-----=> irqs-off
+#                             / _----=> need-resched
+#                            | / _---=> hardirq/softirq
+#                            || / _--=> preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+         hwclock-714   [000] ....    74.783755: ds1307_get_time <-__rtc_read_time
+         hwclock-717   [000] ....    74.806286: ds1307_set_time <-rtc_set_time
+     kworker/0:1-530   [000] ....    74.807901: ds1307_get_time <-__rtc_read_time
+         hwclock-719   [000] ....    74.818941: ds1307_get_time <-__rtc_read_time
+         hwclock-723   [000] ....    74.840501: ds1307_get_time <-__rtc_read_time
+             cat-727   [000] ....    74.869994: ds1307_get_time <-__rtc_read_time
+             cat-729   [000] ....    74.888944: ds1307_get_time <-__rtc_read_time
+             cat-733   [000] ....    74.925310: ds1307_get_time <-__rtc_read_time
