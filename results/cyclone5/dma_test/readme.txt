@@ -1,7 +1,7 @@
 Interpretation of test results: 100% coverage
 
-Some functions which show 0 calls are not counted for one of the 
-following reasons.  They are initzaltion functions, they are shutdown 
+Some functions which show 0 calls are not counted for one of the
+following reasons.  They are initialization functions, they are shutdown
 functions, or they were not modified.
 
 of_dma_pl330_xlate:0          == init
