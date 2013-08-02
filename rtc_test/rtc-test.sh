@@ -23,6 +23,22 @@ path_test()
     fi
 }
 
+sysfs_test()
+{
+    attr=$1
+    shift
+    sysfs_value="$(cat $SYSFS/$attr)"
+    echo "$SYSFS/$attr == $sysfs_value"
+    if [ "$@" == 'ANYTHING' ]; then
+	return
+    fi
+    if [ "$sysfs_value" != "$@" ]; then
+	echo "ERROR $SYSFS/$attr == $sysfs_value ; expected $@"
+	status_fail=1
+    fi
+}
+
+
 #===========================================================
 echo "rtc test"
 echo
@@ -44,10 +60,13 @@ if [ -z "$DEVNODE" ] || [ ! -e "$DEVNODE" ]; then
     exit 1
 fi
 
-path_test /sys/class/rtc/$RTC_DEV
-path_test /sys/class/rtc/$RTC_DEV/time
-path_test /sys/class/rtc/$RTC_DEV/date
-path_test /proc/driver/rtc
+SYSFS=/sys/class/rtc/$RTC_DEV
+PROC=/proc/driver/rtc
+
+path_test $SYSFS
+path_test $SYSFS/time
+path_test $SYSFS/date
+path_test $PROC
 
 hw_tm="$(hwclock | cut -d' ' -f1-5)"
 sys_tm="$(date +'%a %b %d %T %Y')"
@@ -72,8 +91,15 @@ for tries in 1 2 3 4; do
     echo "rtc time    : $hw_tm"
     echo "system time : $sys_tm"
     echo "FAIL could not set hwclock from system time"
+    sleep 1
 done
 
+sysfs_test date "$(date +'%Y-%m-%d')"
+sysfs_test time "$(date +'%T')"
+sysfs_test name ds1339
+sysfs_test hctosys ANYTHING
+sysfs_test max_user_freq ANYTHING
+sysfs_test since_epoch ANYTHING
 
 echo
 if [ "$status_fail" == 0 ]; then
