@@ -1,12 +1,15 @@
-[    0.255926] fpga bridge driver
-[    0.791150] altera_fpga2sdram_bridge fpgabridge.6: fpga bridge [fpga2sdram] registered as device fpga2sdram0
-[    0.799902] altera_fpga2sdram_bridge fpgabridge.7: fpga bridge [fpga2sdram] registered as device fpga2sdram1
-[    0.808623] altera_fpga2sdram_bridge fpgabridge.8: fpga bridge [fpga2sdram] registered as device fpga2sdram2
-[    0.817338] altera_fpga2sdram_bridge fpgabridge.9: fpga bridge [fpga2sdram] registered as device fpga2sdram3
-[    0.826222] altera_hps2fpga_bridge fpgabridge.2: fpga bridge [hps2fpga] registered as device hps2fpga
-[    0.834370] altera_hps2fpga_bridge fpgabridge.3: fpga bridge [lshps2fpga] registered as device lwhps2fpga
-[    0.842861] altera_hps2fpga_bridge fpgabridge.4: fpga bridge [fpga2hps] registered as device fpga2hps
+[    0.260818] fpga bridge driver
+[    0.766805] altera_fpga2sdram_bridge fpgabridge.6: fpga bridge [fpga2sdram] registered as device fpga2sdram0
+[    0.775607] altera_fpga2sdram_bridge fpgabridge.7: fpga bridge [fpga2sdram] registered as device fpga2sdram1
+[    0.784380] altera_fpga2sdram_bridge fpgabridge.8: fpga bridge [fpga2sdram] registered as device fpga2sdram2
+[    0.793143] altera_fpga2sdram_bridge fpgabridge.9: fpga bridge [fpga2sdram] registered as device fpga2sdram3
+[    0.802103] altera_hps2fpga_bridge fpgabridge.2: fpga bridge [hps2fpga] registered as device hps2fpga
+[    0.810254] altera_hps2fpga_bridge fpgabridge.3: fpga bridge [lshps2fpga] registered as device lwhps2fpga
+[    0.818755] altera_hps2fpga_bridge fpgabridge.4: fpga bridge [fpga2hps] registered as device fpga2hps
 
+gunzip -c /home/root/linux-test/fpga_mgr_test/paris_hardware.rbf.gz | dd of=/dev/fpga0 bs=1M
+0+73 records in
+0+73 records out
 
 fpga2hps
 fpga2sdram0
@@ -58,3 +61,11 @@ sdrctl=00003088 : enables = 0 0 0 1
 disable fpga2sdram3
 sdrctl=00000000 : enables = 0 0 0 0
 
+enabling lw bridge
+reading sysid
+Reading 0x1 count starting at address 0xFF210000
+
+0xFF210000:  00000000
+
+
+PASS

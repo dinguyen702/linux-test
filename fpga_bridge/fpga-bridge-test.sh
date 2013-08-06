@@ -1,5 +1,16 @@
 #!/bin/bash
 
+usage()
+{
+    cat <<EOF
+$(basename $0) [-i FPGA image file][-d fpga dev]
+
+ -i = file to program to FPGA. Defaults to $RAW_IMAGE
+ -d = FPGA device name.  Defaults to $FPGA_DEV
+
+EOF
+}
+
 readreg()
 {
     memtool -32 $1 1 2>&1|grep :|cut -d: -f2|sed 's/ //g'
@@ -42,9 +53,37 @@ toggle()
     echo $status > $1/enable
 }
 
+exit_if_fail()
+{
+    ret=$1
+    if [ "$ret" != '0' ]; then
+	echo "FAIL - return code is $ret"
+	exit
+    fi
+}
+
 #==============================
+
+RAW_IMAGE=paris_hardware.rbf.gz
+FPGA_DEV=fpga0
+
+while [ -n "$1" ]; do
+    case $1 in
+	-i ) RAW_IMAGE=$2 ; shift ;;
+	-d ) FPGA_DEV=$2 ; shift ;;
+	-h|--help ) usage ; exit 1 ;;
+    esac
+    shift
+done
+DEVNODE=/dev/$FPGA_DEV
+
 dmesg | grep bridge
 echo
+
+echo "gunzip -c $RAW_IMAGE | dd of=/dev/$FPGA_DEV bs=1M"
+gunzip -c $RAW_IMAGE | dd of=/dev/$FPGA_DEV bs=1M
+exit_if_fail $?
+
 echo
 cd /sys/class/fpga-bridge
 ls -1
@@ -71,3 +110,14 @@ do
     dump_sdrctl
     echo
 done
+
+echo "enabling lw bridge"
+echo 1 > /sys/class/fpga-bridge/lwhps2fpga/enable
+exit_if_fail $?
+
+echo "reading sysid"
+memtool -32 0xff210000 1
+exit_if_fail $?
+
+echo
+echo "PASS"
