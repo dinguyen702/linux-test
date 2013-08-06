@@ -1,0 +1,50 @@
+Test will delay 1 second(s) between test cases.
+
+================
+
+
+================
+================
+This is line # 1
+This is line # 2
+================
+================
+This is line # 1
+This is line # 0
+================
+================
+This is line # 0
+We scrolled
+================
+================
+This is line # 0
+We scrolled up!
+================
+================
+We scrolled up!
+Now a new line!
+================
+================
+We scrolled up!
+
+================
+================
+We scrolled up!
+New! New!
+================
+Display will not appear changed, so it still has:
+================
+We scrolled up!
+New! New!
+================
+Display will look dimmer.
+Display will look bright again.
+================
+We scrolled up!
+New! Improved!
+================
+================
+
+
+================
+Done!
