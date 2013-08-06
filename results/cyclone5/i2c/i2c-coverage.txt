@@ -1,0 +1,13 @@
+dw_readl:440
+dw_writel:561
+i2c_dw_clear_int:0
+i2c_dw_disable:0
+i2c_dw_disable_int:0
+i2c_dw_enable:0
+i2c_dw_func:0
+i2c_dw_init:0
+i2c_dw_is_enabled:0
+i2c_dw_isr:721
+i2c_dw_read_clear_intrbits:200
+i2c_dw_read_comp_param:0
+i2c_dw_xfer:360

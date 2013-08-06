@@ -1,0 +1,13 @@
+i2c_dw_func
+dw_readl
+i2c_dw_read_comp_param
+i2c_dw_clear_int
+i2c_dw_is_enabled
+i2c_dw_read_clear_intrbits
+dw_writel
+i2c_dw_disable_int
+i2c_dw_disable
+i2c_dw_enable
+i2c_dw_isr
+i2c_dw_init
+i2c_dw_xfer
