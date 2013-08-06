@@ -1,0 +1,12 @@
+fpga_bridge_enable_set
+fpga_bridge_enable_show
+register_fpga_bridge
+remove_fpga_bridge
+alt_fpga_bridge_remove
+alt_fpga_bridge_probe
+alt_fpga2sdram_enable_set
+alt_fpga2sdram_enable_show
+alt_fpga_bridge_remove
+alt_fpga_bridge_probe
+alt_hps2fpga_enable_set
+alt_hps2fpga_enable_show

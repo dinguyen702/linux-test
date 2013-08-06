@@ -1,0 +1,18 @@
+FPGA Manager Test
+
+getting status
+cat /sys/class/fpga/fpga0/name
+name = Altera FPGA Manager
+getting status
+cat /sys/class/fpga/fpga0/status
+status = power up phase
+
+Programming FPGA with ghrd_5asxfb5h4.rbf.gz
+gunzip -c ghrd_5asxfb5h4.rbf.gz | dd of=/dev/fpga0 bs=1M
+0+71 records in
+0+71 records out
+
+getting status
+cat /sys/class/fpga/fpga0/status
+status = user mode
+PASS

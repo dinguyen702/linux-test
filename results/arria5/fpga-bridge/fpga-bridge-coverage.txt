@@ -1,0 +1,12 @@
+alt_fpga2sdram_enable_set:8
+alt_fpga2sdram_enable_show:40
+alt_fpga_bridge_probe:0
+alt_fpga_bridge_probe:0
+alt_fpga_bridge_remove:0
+alt_fpga_bridge_remove:0
+alt_hps2fpga_enable_set:6
+alt_hps2fpga_enable_show:24
+fpga_bridge_enable_set:28
+fpga_bridge_enable_show:128
+register_fpga_bridge:0
+remove_fpga_bridge:0

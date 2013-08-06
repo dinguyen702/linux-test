@@ -1,0 +1,21 @@
+rtc test
+
+PASS - path exists: /sys/class/rtc/rtc0
+PASS - path exists: /sys/class/rtc/rtc0/time
+PASS - path exists: /sys/class/rtc/rtc0/date
+PASS - path exists: /proc/driver/rtc
+
+rtc time    : Sat Jan  1 00:05:43
+system time : Thu Jul 25 03:33:24 2013
+
+Setting hwclock from system clock and reading again
+rtc time    : Thu Jul 25 03:33:24 2013
+system time : Thu Jul 25 03:33:24 2013
+/sys/class/rtc/rtc0/date == 2013-07-25
+/sys/class/rtc/rtc0/time == 03:33:24
+/sys/class/rtc/rtc0/name == ds1339
+/sys/class/rtc/rtc0/hctosys == 0
+/sys/class/rtc/rtc0/max_user_freq == 64
+/sys/class/rtc/rtc0/since_epoch == 1374723204
+
+PASS
