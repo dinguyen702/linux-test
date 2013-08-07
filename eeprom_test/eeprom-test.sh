@@ -2,6 +2,7 @@
 
 SYSFS_PATH=/sys/class/i2c-adapter/i2c-0/0-0051/
 
+# Note that the 24LC32A EEPROM is 32K bits (4K bytes)
 DATA_SIZE_KB=4
 
 echo "kernel version : $(uname -a)"
