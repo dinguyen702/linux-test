@@ -17,3 +17,4 @@ Adding tests:
 
 Test plan:
  * http://sw-wiki.altera.com/twiki/bin/view/Software/HPSLinuxTestPlan
+
