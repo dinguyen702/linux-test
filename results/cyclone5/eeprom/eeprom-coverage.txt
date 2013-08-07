@@ -1,0 +1,8 @@
+at24_bin_read:8
+at24_bin_write:8
+at24_macc_read:0
+at24_macc_write:0
+at24_probe:0
+at24_read:4
+at24_remove:0
+at24_write:4

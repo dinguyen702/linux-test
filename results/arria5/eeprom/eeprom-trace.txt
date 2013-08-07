@@ -1,0 +1,27 @@
+# tracer: function
+#
+# entries-in-buffer/entries-written: 16/16   #P:2
+#
+#                              _-----=> irqs-off
+#                             / _----=> need-resched
+#                            | / _---=> hardirq/softirq
+#                            || / _--=> preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+              dd-703   [000] ....    60.314761: at24_bin_write <-write
+              dd-703   [000] ....    60.314767: at24_write <-at24_bin_write
+              dd-703   [000] ....    60.938452: at24_bin_write <-write
+              dd-703   [000] ....    60.938456: at24_write <-at24_bin_write
+              dd-703   [000] ....    61.578440: at24_bin_write <-write
+              dd-703   [000] ....    61.578443: at24_write <-at24_bin_write
+              dd-703   [000] ....    62.218439: at24_bin_write <-write
+              dd-703   [000] ....    62.218441: at24_write <-at24_bin_write
+              dd-704   [000] ....    62.866727: at24_bin_read <-read
+              dd-704   [000] ....    62.866733: at24_read <-at24_bin_read
+              dd-704   [000] ....    63.045423: at24_bin_read <-read
+              dd-704   [000] ....    63.045427: at24_read <-at24_bin_read
+              dd-704   [000] ....    63.224083: at24_bin_read <-read
+              dd-704   [000] ....    63.224086: at24_read <-at24_bin_read
+              dd-704   [000] ....    63.402746: at24_bin_read <-read
+              dd-704   [000] ....    63.402749: at24_read <-at24_bin_read

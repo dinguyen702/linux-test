@@ -1,0 +1,16 @@
+Reading eeprom name : cat /sys/class/i2c-adapter/i2c-0/0-0051//name
+24c32
+Creating random test data...
+4+0 records in
+4+0 records out
+-rw-r--r--    1 root     root          4096 Jul 25 03:28 /tmp/data
+
+Writing to EEPROM...
+4+0 records in
+4+0 records out
+
+Reading from EEPROM...
+4+0 records in
+4+0 records out
+
+PASS
