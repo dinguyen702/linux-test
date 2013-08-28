@@ -14,12 +14,53 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
 #include "LTC2422.h"
 
 /* Global Constants */
 const uint16_t LTC2422_TIMEOUT= 1000;  /* Set 1 second LTC2422 SPI timeout */
 
 const float LTC2422_lsb = 4.7683761E-6;  /* The LTC2422 least significant bit value with 5V full-scale */
+
+/* Global Variables */
+int continuous_poll = 0;
+
+
+static void print_usage(const char *prog)
+{
+	printf("Usage: %s [-ch]\n", prog);
+	puts("  -c --continuous   Continuously sample ADC\n"
+	     "  -h --help         Print this Usage\n"
+	     );
+	exit(1);
+}
+
+static void parse_opts(int argc, char *argv[])
+{
+	while (1) {
+		static const struct option lopts[] = {
+			{ "continuous",  0, 0, 'c' },
+			{ "help",        0, 0, 'h' },
+			{ NULL, 0, 0, 0 },
+		};
+		int c;
+
+		c = getopt_long(argc, argv, ":ch", lopts, NULL);
+
+		if (c == -1)
+			break;
+
+		switch (c) {
+		case 'c':
+			continuous_poll = 1;
+			break;
+		case 'h':
+		default:
+			print_usage(argv[0]);
+			break;
+		}
+	}
+}
 
 static void delay(unsigned int ms)
 {
@@ -68,15 +109,23 @@ static int32_t spi_read_adc(void)
   return(return_code);
 }
 
+
 int main(int argc, char *argv[])
 {
 	int ret = 0;
+	
+	parse_opts(argc, argv);
 		
-	while(1)
+	if (continuous_poll)
+	{
+		while(1)
+		{
+			ret = spi_read_adc();
+			delay(1000);	 /* Delay 1000ms = 1sec */
+		}
+	} else 
 	{
 		ret = spi_read_adc();
-		delay(1000);	 /* Delay 1000ms = 1sec */
-	}
-	
+	}	
 	return ret;
 }
