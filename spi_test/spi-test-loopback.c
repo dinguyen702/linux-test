@@ -77,14 +77,15 @@ static void print_usage(const char *prog)
 	     "  -s --speed    max speed (Hz)\n"
 	     "  -d --delay    delay (usec)\n"
 	     "  -b --bpw      bits per word \n"
-	     "  -w --wfile    filename to seed write data\n"
-             "  -r --rfile    filename to save read data\n"
 	     "  -l --loop     loopback\n"
 	     "  -H --cpha     clock phase\n"
 	     "  -O --cpol     clock polarity\n"
 	     "  -L --lsb      least significant bit first\n"
 	     "  -C --cs-high  chip select active high\n"
-	     "  -3 --3wire    SI/SO signals shared\n" );
+	     "  -3 --3wire    SI/SO signals shared\n" 
+	     "  -w --wfile    filename of data to write out to SPI\n"
+             "  -r --rfile    filename to save SPI read data into\n"
+	     "  -h --help     Print this Usage message\n" );
 	exit(1);
 }
 
@@ -108,11 +109,12 @@ static void parse_opts(int argc, char *argv[])
 			{ "3wire",   0, 0, '3' },
 			{ "no-cs",   0, 0, 'N' },
 			{ "ready",   0, 0, 'R' },
+			{ "help",    0, 0, 'h' },
 			{ NULL, 0, 0, 0 },
 		};
 		int c;
 
-		c = getopt_long(argc, argv, "D:s:d:b:w:r:lHOLC3NR", lopts, NULL);
+		c = getopt_long(argc, argv, "D:s:d:b:w:r:lHOLC3NRh", lopts, NULL);
 
 		if (c == -1)
 			break;
@@ -164,6 +166,7 @@ static void parse_opts(int argc, char *argv[])
 		case 'R':
 			mode |= SPI_READY;
 			break;
+		case 'h':
 		default:
 			print_usage(argv[0]);
 			break;
@@ -193,12 +196,13 @@ int main(int argc, char *argv[])
 		tx[i] = (uint8_t)i;
 	}
 	/* Print out the result */
-	for (ret = 0; ret < SPI_ARRAY_SIZE; ret++) {
+	/*for (ret = 0; ret < SPI_ARRAY_SIZE; ret++) {
 		if (!(ret % 6))
 			puts("");
 		printf("%.2X ", tx[ret]);
 	}
 	puts("");
+	*/
 	
 	/* Parse the input parameters */
 	parse_opts(argc, argv);
