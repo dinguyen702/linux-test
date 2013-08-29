@@ -36,19 +36,21 @@ static uint8_t mode;
 static uint8_t bits = 8;
 static uint32_t speed = 500000;
 static uint16_t delay;
+static int  verbose = 0;
+static int fsize = SPI_ARRAY_SIZE;
 static uint8_t * tx;
 static uint8_t * rx;
 static FILE * wfile;	/* SPI Write data passed in here */
 static FILE * rfile;	/* SPI read results go here. */
 static char * rfilename = "spi_read_loopback_data.bin";
 
-static void transfer(int fd)
+static int transfer(int fd)
 {
 	int ret;
 	struct spi_ioc_transfer tr = {
 		.tx_buf = (unsigned long)tx,
 		.rx_buf = (unsigned long)rx,
-		.len = SPI_ARRAY_SIZE,
+		.len = fsize,
 		.delay_usecs = delay,
 		.speed_hz = speed,
 		.bits_per_word = bits,
@@ -58,21 +60,32 @@ static void transfer(int fd)
 	if (ret < 1)
 		pabort("can't send spi message");
 
-	for (ret = 0; ret < SPI_ARRAY_SIZE; ret++) {
-		if (!(ret % 6))
-			puts("");
-		printf("%.2X ", rx[ret]);
+	if (verbose)
+	{
+		for (ret = 0; ret < fsize; ret++) 
+		{
+			if (!(ret % 6))
+				puts("");
+			printf("%.2X ", rx[ret]);
+		}
+		puts("");
 	}
-	puts("");
 	/* Copy the rx buffer into the read file */
 	rfile = fopen(rfilename, "wb");
-	fwrite(rx, sizeof(uint8_t), SPI_ARRAY_SIZE, rfile);
+	ret = fwrite(rx, sizeof(uint8_t), fsize, rfile);
+	if (ret != fsize)
+	{
+		printf("File Read Error - only %d instead of %d bytes read",
+			ret, fsize);
+	} else
+		ret = 0;
 	fclose(rfile);
+	return ret;
 }
 
 static void print_usage(const char *prog)
 {
-	printf("Usage: %s [-DsbdlHOLC3]\n", prog);
+	printf("Usage: %s [-DsbdlHOLC3vwrh]\n", prog);
 	puts("  -D --device   device to use (default /dev/spidev0.0)\n"
 	     "  -s --speed    max speed (Hz)\n"
 	     "  -d --delay    delay (usec)\n"
@@ -83,6 +96,7 @@ static void print_usage(const char *prog)
 	     "  -L --lsb      least significant bit first\n"
 	     "  -C --cs-high  chip select active high\n"
 	     "  -3 --3wire    SI/SO signals shared\n" 
+	     "  -v --verbose  Run in verbose mode\n" 
 	     "  -w --wfile    filename of data to write out to SPI\n"
              "  -r --rfile    filename to save SPI read data into\n"
 	     "  -h --help     Print this Usage message\n" );
@@ -109,12 +123,13 @@ static void parse_opts(int argc, char *argv[])
 			{ "3wire",   0, 0, '3' },
 			{ "no-cs",   0, 0, 'N' },
 			{ "ready",   0, 0, 'R' },
+			{ "verbose", 0, 0, 'v' },
 			{ "help",    0, 0, 'h' },
 			{ NULL, 0, 0, 0 },
 		};
 		int c;
 
-		c = getopt_long(argc, argv, "D:s:d:b:w:r:lHOLC3NRh", lopts, NULL);
+		c = getopt_long(argc, argv, "D:s:d:b:w:r:vlHOLC3NRh", lopts, NULL);
 
 		if (c == -1)
 			break;
@@ -134,10 +149,18 @@ static void parse_opts(int argc, char *argv[])
 			break;
 		case 'w':
 			wfile = fopen(optarg, "rwb");
-			i = fread(tx, sizeof(uint8_t), SPI_ARRAY_SIZE, wfile);
-			fclose(wfile);
-			if (i != SPI_ARRAY_SIZE)
-				pabort("Unable to read entire file into buffer");
+			if (wfile)
+			{
+			    fseek(wfile, 0, SEEK_END);
+			    fsize = ftell(wfile);
+			    if (verbose) printf("Filesize to write is %d bytes\n", fsize);
+			    fseek(wfile, 0, SEEK_SET);
+			    if (fsize > SPI_ARRAY_SIZE) fsize = SPI_ARRAY_SIZE;
+			    i = fread(tx, sizeof(uint8_t), fsize, wfile);
+			    fclose(wfile);
+			    //if (i != SPI_ARRAY_SIZE)
+			    //	pabort("Unable to read entire file into buffer");
+                        }
 			break;
 		case 'b':
 			bits = atoi(optarg);
@@ -165,6 +188,9 @@ static void parse_opts(int argc, char *argv[])
 			break;
 		case 'R':
 			mode |= SPI_READY;
+			break;
+		case 'v':
+			verbose = 1;
 			break;
 		case 'h':
 		default:
@@ -195,17 +221,22 @@ int main(int argc, char *argv[])
 	{
 		tx[i] = (uint8_t)i;
 	}
-	/* Print out the result */
-	/*for (ret = 0; ret < SPI_ARRAY_SIZE; ret++) {
-		if (!(ret % 6))
-			puts("");
-		printf("%.2X ", tx[ret]);
-	}
-	puts("");
-	*/
+
 	
 	/* Parse the input parameters */
 	parse_opts(argc, argv);
+
+	if (verbose)
+	{
+		/* Print out the seed result */
+		for (ret = 0; ret < fsize; ret++) 
+		{
+			if (!(ret % 6))
+				puts("");
+			printf("%.2X ", tx[ret]);
+		}
+		puts("");
+	}
 
 	fd = open(device, O_RDWR);
 	if (fd < 0)
@@ -248,7 +279,7 @@ int main(int argc, char *argv[])
 	printf("bits per word: %d\n", bits);
 	printf("max speed: %d Hz (%d KHz)\n", speed, speed/1000);
 
-	transfer(fd);
+	ret = transfer(fd);
 
 	close(fd);
 

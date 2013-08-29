@@ -61,12 +61,15 @@ FAIL_COUNT=0
 
 for (( a=1; a <= $COUNT; a++ ))
 do
-	NUM_BYTES=$(($RANDOM%1024))
+	# Generate a random number in the range of 0 to 1024.
+	NUM_BYTES=$(( $RANDOM % 1024 ))
 	echo -n "Number of Bytes = $NUM_BYTES"
-	#dd if=/dev/random of=spi_seed_file.bin bs=$NUM_BYTES count=1
+	echo
+
+	#Generate random data in the file
+	dd if=/dev/urandom of=spi_seed_file.bin bs=$NUM_BYTES count=1
 	# Perform the SPI loopback test.
-	#./spi-test-loopback -D /dev/$SPI_DEVNODE -w spi_seed_file.bin -r spi_read_result.bin
-	./spi-test-loopback -D /dev/$SPI_DEVNODE -r spi_read_result.bin
+	./spi-test-loopback -D /dev/$SPI_DEVNODE -w spi_seed_file.bin -r spi_read_result.bin
 
 	
 	#Compare the input and output filenames
@@ -77,6 +80,7 @@ do
 		let "SUCCESS_COUNT++"
 	else
 		echo "!!!!Compare failed on iteration $a!!"
+		echo "Number of Bytes sent was $NUM_BYTES."
 		echo
 		let "FAIL_COUNT++"
 	fi
