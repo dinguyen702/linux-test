@@ -33,3 +33,5 @@ libsocketcan.so -> libsocketcan.so.2.2.0
 libsocketcan.so.2 -> libsocketcan.so.2.2.0
 libsocketcan.so.2.2.0
 
+There have been some minor changes to the canutilities. Two patch files
+will apply the appropriate patches if needed to the 4.0.6 release.
