@@ -1,4 +1,4 @@
-include ../Makefile.inc
+include ../../Makefile.inc
 
 CFLAGS = -O0 -fno-omit-frame-pointer
 
