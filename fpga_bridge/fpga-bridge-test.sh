@@ -6,6 +6,8 @@ usage()
 $(basename $0) [-i FPGA image file][-d fpga dev]
 
  -i = file to program to FPGA. Defaults to $RAW_IMAGE
+ -s = read sysid. Only works with images that include sysid.
+      ***will hang the board on all other images***
  -d = FPGA device name.  Defaults to $FPGA_DEV
 
 EOF
@@ -34,12 +36,9 @@ dump_sdrctl()
 {
     sdrctl=$(readreg 0xffc25080)
 
-    fpga2sdram0=$(cat fpga2sdram0/enable)
-    fpga2sdram1=$(cat fpga2sdram1/enable)
-    fpga2sdram2=$(cat fpga2sdram2/enable)
-    fpga2sdram3=$(cat fpga2sdram3/enable)
+    fpga2sdram=$(cat fpga2sdram/enable)
 
-    echo "sdrctl=$sdrctl : enables = $fpga2sdram0 $fpga2sdram1 $fpga2sdram2 $fpga2sdram3"
+    echo "sdrctl=$sdrctl : enables = $fpga2sdram"
 }
 
 toggle()
@@ -66,11 +65,13 @@ exit_if_fail()
 
 RAW_IMAGE=paris_hardware.rbf.gz
 FPGA_DEV=fpga0
+READ_SYSID=
 
 while [ -n "$1" ]; do
     case $1 in
 	-i ) RAW_IMAGE=$2 ; shift ;;
 	-d ) FPGA_DEV=$2 ; shift ;;
+	-s ) READ_SYSID=1 ;;
 	-h|--help ) usage ; exit 1 ;;
     esac
     shift
@@ -115,9 +116,11 @@ echo "enabling lw bridge"
 echo 1 > /sys/class/fpga-bridge/lwhps2fpga/enable
 exit_if_fail $?
 
-echo "reading sysid"
-memtool -32 0xff210000 1
-exit_if_fail $?
+if [ -n "$READ_SYSID" ]; then
+    echo "reading sysid"
+    memtool -32 0xff210000 1
+    exit_if_fail $?
+fi
 
 echo
 echo "PASS"
