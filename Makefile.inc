@@ -1,4 +1,7 @@
 CC	= $(CROSS_COMPILE)gcc
+CXX	= $(CROSS_COMPILE)g++
+STRIP	= $(CROSS_COMPILE)strip
+LD	= $(CROSS_COMPILE)ld
 CD	= cd
 CP	= cp
 ECHO	= echo
