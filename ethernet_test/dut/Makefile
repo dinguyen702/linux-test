@@ -7,7 +7,7 @@ SRC = duttest.cpp Makefile
 SCRIPTS =
 
 all: $(EXE)
-	$(CXX) -o $(EXE) duttest.cpp 
+	$(CXX) -Wall -o $(EXE) duttest.cpp 
 	@file ping
 
 install : $(SCRIPTS) $(EXE)

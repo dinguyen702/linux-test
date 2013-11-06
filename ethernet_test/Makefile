@@ -1,11 +1,23 @@
 include ../Makefile.inc
 
-all : ethtool/ethtool
+all : ethtool/ethtool vlan/vconfig ping/ping dut/duttest
 
 ethtool/ethtool :
 	$(CD) ethtool && \
 	./configure CC=${CROSS_COMPILE}gcc --host i386 && \
 	$(MAKE)
+
+vlan/vconfig :
+	$(CD) vlan && \
+	make -B vconfig	 CC=${CROSS_COMPILE}gcc STRIP=${CROSS_COMPILE}strip
+
+ping/ping :
+	$(CD) ping && \
+	make -B ping
+
+dut/duttest :
+	$(CD) dut && \
+	make -B duttest
 
 install : ethtool/ethtool
 	$(INSTALL) -d $(INSTALLPATH)

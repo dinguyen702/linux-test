@@ -7,7 +7,7 @@ SRC = ping.c Makefile
 SCRIPTS =
 
 all: $(EXE)
-	$(CC) -o $(EXE) ping.c 
+	$(CC) -Wall -o $(EXE) ping.c 
 	@file ping
 
 install : $(SCRIPTS) $(EXE)
