@@ -1,0 +1,6 @@
+altr_sdram_get_total_mem_size:0
+altr_sdram_mc_err_handler:1
+altr_sdram_mc_probe:0
+altr_sdram_mc_remove:0
+altr_sdr_mc_create_debugfs_nodes:0
+altr_sdr_mc_err_inject_write:1

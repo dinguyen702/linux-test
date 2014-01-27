@@ -1,0 +1,6 @@
+altr_sdram_mc_err_handler
+altr_sdr_mc_err_inject_write
+altr_sdr_mc_create_debugfs_nodes
+altr_sdram_get_total_mem_size
+altr_sdram_mc_probe
+altr_sdram_mc_remove

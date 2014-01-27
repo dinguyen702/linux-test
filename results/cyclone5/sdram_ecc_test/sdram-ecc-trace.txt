@@ -1,0 +1,13 @@
+# tracer: function
+#
+# entries-in-buffer/entries-written: 2/2   #P:2
+#
+#                              _-----=> irqs-off
+#                             / _----=> need-resched
+#                            | / _---=> hardirq/softirq
+#                            || / _--=> preempt-depth
+#                            ||| /     delay
+#           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
+#              | |       |   ||||       |         |
+              sh-169   [000] ....  5052.391313: altr_sdr_mc_err_inject_write <-vfs_write
+              sh-169   [000] d.h.  5052.397011: altr_sdram_mc_err_handler <-handle_irq_event_percpu
