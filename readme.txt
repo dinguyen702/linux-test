@@ -6,6 +6,7 @@ Building:
  * make clean
  * make
  * make INSTALLPATH=/full/path/to/rootfs/unit_tests install
+   or just 'make install' to install to linux-test/unit_tests
 
 Adding tests:
  * Please don't change the root Makefile and hack your stuff in.
