@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-FIRMWARE = *.rbf
+BITSTREAMS = *.gz
 SCRIPTS = *.sh
 
 all :
@@ -8,6 +8,6 @@ all :
 install : $(SCRIPTS)
 	$(INSTALL) -d $(INSTALLPATH)
 	$(INSTALL) -m755 $(SCRIPTS) $(INSTALLPATH)
-#	$(INSTALL) -m644 $(FIRMWARE) $(INSTALLPATH)
+	$(INSTALL) -m644 $(BITSTREAMS) $(INSTALLPATH)
 
 clean :
