@@ -16,9 +16,9 @@ path_test()
 {
     path=$1
     if [ -e "$path" ]; then
-	echo "PASS - path exists: $path"
+	echo "HAPPY - path exists: $path"
     else
-	echo "FAIL - path does not exist: $path"
+	echo "UNHAPPY - path does not exist: $path"
 	status_fail=1
     fi
 }
