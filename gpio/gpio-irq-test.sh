@@ -1,0 +1,99 @@
+#!/bin/bash
+
+CYCONE5_BUTTONS="195 194 193 192"
+ARRIA5_BUTTONS="212 211 210 204"
+
+usage()
+{
+    cat <<EOF
+Test will:
+ 1. export the gpios for the buttons
+ 2. enable the interrupts (either rising edge, falling edge or both
+    depending on the button).
+ 3. display the interrupt counts from /proc/interrupt once a second
+    while tester hits the buttons.
+
+Usage: $(basename $0) [-h]
+
+EOF
+}
+
+setedge()
+{
+    echo $1 > /sys/class/gpio/gpio${2}/edge
+    if [ "$1" != "$(cat /sys/class/gpio/gpio${2}/edge)" ]; then
+        echo "FAIL could not set gpio interrupt edge $1 for gpio $2"
+        exit
+    fi
+}
+
+get_devkit_type()
+{
+    # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
+    # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
+    cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
+}
+
+export_gpio()
+{
+    if [ ! -d /sys/class/gpio/gpio${1} ]; then
+        echo $1 > /sys/class/gpio/export
+    fi
+    if [ ! -d /sys/class/gpio/gpio${1} ]; then
+        echo "FAIL: did not export gpio $1"
+        exit
+    fi
+}
+
+#---------------------------------------------------------------------
+while [ -n "$1" ]; do
+    case $1 in
+	-h|--help ) usage ; exit ;;
+	* ) echo "unknown parameter: $1" ; echo ; usage ; exit ;;
+    esac
+    shift
+done
+
+case "$(get_devkit_type)" in
+    ArriaV ) BUTTON_GPIOS="$ARRIA5_BUTTONS" ;;
+    CycloneV ) BUTTON_GPIOS="$CYCONE5_BUTTONS" ;;
+    * ) echo "unable to identify board. exiting." ; exit 1 ;;
+esac
+
+for foo in $BUTTON_GPIOS; do
+    export_gpio $foo
+done
+echo
+
+echo "Setting interrupt edge for each button gpio:"
+gpio1="$(echo $BUTTON_GPIOS | cut -d' ' -f1)"
+gpio2="$(echo $BUTTON_GPIOS | cut -d' ' -f2)"
+gpio3="$(echo $BUTTON_GPIOS | cut -d' ' -f3)"
+gpio4="$(echo $BUTTON_GPIOS | cut -d' ' -f4)"
+setedge both $gpio1
+setedge rising $gpio2
+setedge falling $gpio3
+setedge falling $gpio4
+
+for foo in $BUTTON_GPIOS; do
+    echo "$foo : $(cat /sys/class/gpio/gpio${foo}/edge)"
+done
+
+echo "for the last part of the test, script will print out interrupt"
+echo "counts for gpios once a second.  Hit gpio buttons and watch the"
+echo "counts change"
+echo
+echo "Hit Enter key to start..."
+read line
+clear
+
+while true; do
+    echo "Hit ctrl-c when done."
+    echo
+    head -n1 /proc/interrupts
+    grep gpio /proc/interrupts
+    echo
+    sleep 1
+    clear
+done
+
