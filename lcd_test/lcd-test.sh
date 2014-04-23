@@ -72,12 +72,23 @@ else
     echo
 fi
 
+lcd_dmesg="$(dmesg | grep lcd)"
+if [ "$lcd_dmesg" != 'lcd-comm 0-0028: LCD driver initialized' ]; then
+    echo "FAIL got unexpected boot up message"
+    echo "$lcd_dmesg"
+    exit 1
+fi
+
 #=============================================================
 # Clear display
 printf '\e[2J' > /dev/$LCD_DEVNODE
 display_looks_like '' ''
 
-printf 'This is line # 1\nThis is line # 2' > /dev/$LCD_DEVNODE
+printf '\ntilda: \x7e' > /dev/$LCD_DEVNODE
+printf '\nbackslash: \x5c' > /dev/$LCD_DEVNODE
+display_looks_like 'tilda: ~' 'backslash: \'
+
+printf '\nThis is line # 1\nThis is line # 2' > /dev/$LCD_DEVNODE
 display_looks_like 'This is line # 1' 'This is line # 2'
 
 # Since cursor is at the end of line, all other text will overwrite
