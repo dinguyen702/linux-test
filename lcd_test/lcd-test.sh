@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 LCD_DEVNODE=ttyLCD0
 SLEEP_TIME=
@@ -72,7 +72,8 @@ else
     echo
 fi
 
-lcd_dmesg="$(dmesg | grep lcd)"
+# get boot messages minus the '[    0.229804]'-style timestamp
+lcd_dmesg="$(dmesg | grep lcd | sed -r 's,\[[ 0-9.]*\] ,,')"
 if [ "$lcd_dmesg" != 'lcd-comm 0-0028: LCD driver initialized' ]; then
     echo "FAIL got unexpected boot up message"
     echo "$lcd_dmesg"
