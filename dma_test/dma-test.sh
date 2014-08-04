@@ -20,6 +20,9 @@ echo Success count is $success_count
 if [ $success_count = "8" ]
 then
 echo "PASS"
+status=0
 else
 echo "FAIL"
+status=1
 fi
+exit $status
