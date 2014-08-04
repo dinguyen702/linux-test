@@ -26,6 +26,9 @@ thesame=$(diff -q test.txt test1.txt|grep differ)
 if [ "$thesame" != "" ]
 then
 echo FAIL
+status=1
 else
 echo PASS
+status=0
 fi
+exit $status
