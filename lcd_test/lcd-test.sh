@@ -2,7 +2,20 @@
 
 LCD_DEVNODE=ttyLCD0
 SLEEP_TIME=
-SYS_LCD_BRIGHTNESS=/sys/devices/soc.0/ffc04000.i2c/i2c-0/0-0028/brightness
+SYS_DEVICES_SOC=
+for foo in '/sys/devices/soc.0' '/sys/devices/soc'; do
+    if [ -e "$foo" ]; then    
+        SYS_DEVICES_SOC=$foo
+        break
+    fi
+done
+
+echo $SYS_DEVICES_SOC
+
+if [ -z "$SYS_DEVICES_SOC" ]; then
+    echo "Error, did not find normal sysfs paths"
+    exit 1
+fi
 
 usage()
 {
@@ -45,6 +58,7 @@ display_looks_like()
 
 set_brightness()
 {
+    SYS_LCD_BRIGHTNESS=${SYS_DEVICES_SOC}/ffc04000.i2c/i2c-0/0-0028/brightness
     echo $1 > $SYS_LCD_BRIGHTNESS
     bright="$(cat $SYS_LCD_BRIGHTNESS)"
     if [ "$1" != "$bright" ]; then
