@@ -108,4 +108,4 @@ else
     echo "FAIL due to failures already listed above"
 fi
 
-exit 0
+exit $status_fail
