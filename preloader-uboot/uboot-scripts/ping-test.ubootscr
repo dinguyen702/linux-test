@@ -1,0 +1,8 @@
+# environment setup
+echo "UBoot test: Ping"
+
+setenv pingip 192.199.1.1
+
+if ping ${pingip}; then echo ping ok; else echo ping not ok; fi
+
+

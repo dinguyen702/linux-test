@@ -1,0 +1,29 @@
+# environment setup
+echo "UBoot test: SD Access (FAT)"
+setenv autoload no
+setenv serverip 137.57.160.198
+setenv loadaddr1 0x8000
+setenv loadaddr2
+setenv entry /u/yvanderv/linux/dude-infra/uboot/tests/uboot_sd_fat/blob
+
+# init
+dhcp
+mmc rescan
+
+# core of the test
+for i in 1 2 3 4 ; do
+    echo "INFO: processing file blob${i}"
+    if tftp ${entry}${i} ; then
+        if fatwrite mmc 0:1 ${loadaddr} blob${i} ${filesize} ; then
+            echo "SUCCESS: file ${i} written"
+            
+        else
+            echo "ERROR: could not write file ${i}"
+        fi
+    else
+        echo "ERROR: failed to download file ${i}"
+    fi
+done
+
+# let's conclude
+echo "INFO: test concluded"
