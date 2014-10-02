@@ -19,6 +19,7 @@ int uboot_app_main(int argc, char * const argv[])
 
 	printf("CPU ID %x\n", __get_cpuid());
 
+	return 0;
 	printf ("Example expects ABI version %d\n", XF_VERSION);
 	printf ("Actual U-Boot ABI version %d\n", (int)get_version());
 
