@@ -1,0 +1,29 @@
+#!/usr/bin/expect
+source parameters.exp
+
+proc connect_linux {} {
+	send "\r"
+	expect {
+ 		timeout
+			{ puts "Telnet timed out\n" ; return 0 }
+ 		"login:"
+			{ send "root\r"; set rr [connect] }
+ 		"root@socfpga_cyclone5:~#"
+	}
+	sleep 1
+	return 1
+}
+
+proc connect_uboot {} {
+	send "\n"
+	sleep 1
+	expect {
+ 		timeout
+			{ puts "Prompt timed out\n" ; return 0 }
+ 		"SOCFPGA_CYCLONE5 #"
+			{  }
+	}
+	return 1
+}
+
+

@@ -1,0 +1,27 @@
+#!/usr/bin/expect
+source parameters.exp
+source lib.exp
+
+spawn python nbreboot.py $nbootip $nboottrgtport 
+expect {
+	timeout 
+		{ set retv -1 }
+	"A0"
+		{ set retv 0 }
+	}
+
+spawn telnet $ip $localport
+expect {
+	timeout
+		{ send_user "Telnet timed out\n" ; return -1 }
+	"Hit any key to stop autoboot:"
+		{ send " ";  }
+}
+
+#expect {
+# 	timeout
+#		{ puts "Prompt timed out\n" ; return 0 }
+# 	"SOCFPGA_CYCLONE5 #"
+#		{ puts "Cyclone 5 SOC Prompt 0\n"; }
+#}
+sleep 1

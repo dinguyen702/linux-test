@@ -1,0 +1,31 @@
+#!/usr/bin/expect
+source parameters.exp
+source lib.exp
+
+set retv -1
+spawn python nbreboot.py $nbootip $nboottrgtport 
+expect {
+	timeout 
+		{ set retv -1 }
+	"A0"
+		{ set retv 0 }
+	}
+wait
+sleep 10
+connect_linux
+
+
+spawn python nbstatus.py $nbootip
+expect {
+	timeout 
+		{ set retv -1 }
+	"11111"
+		{ set retv 0 }
+	}
+wait
+sleep 10
+connect_linux
+
+
+exit $retv
+

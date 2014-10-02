@@ -1,0 +1,20 @@
+#!/usr/bin/expect
+
+source uboot.exp
+
+#connect_uboot
+
+puts "connected\n"
+
+send "help\n"
+sleep 1
+expect {
+ 	timeout
+		{ puts "Prompt timed out\n" ; return 0 }
+	"SOCFPGA_CYCLONE5 #"
+		{  }
+}
+
+sleep 3
+puts "\n"
+
