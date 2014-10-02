@@ -1,0 +1,7 @@
+
+tftp 100000 tfile.bin
+
+tftp 0 tftp-test.bin
+
+go 0 100000
+
