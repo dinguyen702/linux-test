@@ -1,0 +1,79 @@
+#
+# Copyright (C) 2014 Altera Corporation. All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms and conditions of the GNU General Public License,
+# version 2, as published by the Free Software Foundation.
+#
+# This program is distributed in the hope it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Test: raw access to SD/MMC
+echo "INFO: testing raw access to SD/MMC card"
+
+setenv autoload no
+setenv serverip 137.57.160.198
+setenv loadaddr1 0x010000
+setenv loadaddr2 0x110000
+setenv mmcdev    0
+setenv part      2
+setenv tftpentry /u/yvanderv/linux/linux-test/preloader-uboot/data
+setenv sdimg     sd-sdmmc_fs_access.bin
+setenv success 0 # optimism, pass it on.
+
+# initialize
+dhcp
+if mmc rescan ; then
+    if tftp ${loadaddr1} ${tftpentry}/${sdimg} ; then
+        if mmc write ${loadaddr1} 0 ${filesize} ; then 
+            echo "INFO: sdimg now in place"
+            for size in 16 32 64 128 256 512 1024 ; do
+                # first we download one file write and read back
+                if tftp ${loadaddr1} ${tftpentry}/data${size}.bin ; then
+                    setenv fsize ${filesize}
+                    if fatwrite mmc ${mmcdev}:${part} ${loadaddr1} data${size}.bin ${fsize} ; then
+                        if fatread mmc ${mmcdev}:${part} ${loadaddr2} data${size}.bin ; then
+                           echo "INFO: cmparing memory ${fsize} bytes"
+                           if cmp.b ${loadaddr1} ${loadaddr2} ${fsize} ; then
+                               echo "SUCCESS: test completed"
+                           else # cmp.b
+                               echo "ERROR: test failed"
+                               setenv success 1
+                           fi # cmp.b 
+                        else # fatload
+                             echo "ERROR: mmc read"
+    		     setenv success 1
+                        fi # fatload
+                    else # fatwrite
+                        echo "ERROR: mmc write"
+                        setenv success 1
+                    fi # fatwrite
+                else # if tftp
+                    echo "ERROR: failed to tftp"
+                    setenv success 1
+                fi # if tftp
+            done # for size...
+        else # mmc write sdimg
+           echo "ERROR: mmc write sdimg" 
+           setenv success 1
+        fi # mmc write sdimg
+    else #tftp sdimg
+        echo "ERROR: failed to tftp sdimg"
+        setenv success 1
+    fi #tftp sdimg
+else # mmc rescan
+    echo "ERROR: mmc rescan failed"
+    setenv success 1
+fi # mmc rescan
+if test ${success} == 1 ; then
+    echo "STATUS: failed"
+else # if test
+    echo "STATUS: success"
+fi # if test
+
