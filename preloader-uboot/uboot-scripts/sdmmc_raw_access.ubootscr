@@ -1,0 +1,70 @@
+#
+# Copyright 2010-2011 Calxeda, Inc.
+# Copyright 2012 Pavel Machek <pavel@denx.de>
+# Based on platsmp.c, Copyright (C) 2002 ARM Ltd.
+# Copyright (C) 2012 Altera Corporation
+#
+# This program is free software; you can redistribute it and/or modify it
+# under the terms and conditions of the GNU General Public License,
+# version 2, as published by the Free Software Foundation.
+#
+# This program is distributed in the hope it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+# more details.
+#
+# You should have received a copy of the GNU General Public License along with
+# this program.  If not, see <http://www.gnu.org/licenses/>.
+#
+
+# Test: raw access to SD/MMC
+echo "INFO: testing raw access to SD/MMC card"
+
+setenv autoload no
+setenv serverip 137.57.160.198
+setenv loadaddr1 0x010000
+setenv loadaddr2 0x110000
+setenv startblk  2048
+setenv tftpentry /u/yvanderv/tmp/tests/uboot
+setenv success 0 # optimism, pass it on.
+
+# initialize
+dhcp
+if mmc rescan ; then
+    for size in 16 32 64 128 256 512 1024 ; do
+        # first we download one file write and read back
+        if tftp ${loadaddr1} ${tftpentry}/data${size}.bin ; then
+            setenv fsize ${filesize}
+            if mmc write ${loadaddr1} ${startblk} ${fsize} ; then
+                if mmc read ${loadaddr2} ${startblk} ${fsize} ; then
+                   echo "INFO: cmparing memory ${fsize} bytes"
+                   if cmp.b ${loadaddr1} ${loadaddr2} ${fsize} ; then
+                       echo "SUCCESS: test completed"
+                   else # cmp.b
+                       echo "ERROR: test failed"
+                       setenv success 1
+                   fi # cmp.b 
+                else # mmc read
+                     echo "ERROR: mmc read"
+		     setenv success 1
+                fi # mmc read
+            else # mmc write
+                echo "ERROR: mmc write"
+                setenv success 1
+            fi # mmc write
+        else # if tftp
+            echo "ERROR: failed to tftp"
+            setenv success 1
+        fi # if tftp
+    done # for size...
+else # mmc rescan
+    echo "ERROR: mmc rescan failed"
+    setenv success 1
+fi # mmc rescan
+
+if test ${success} == 1 ; then
+    echo "STATUS: failed"
+else # if test
+    echo "STATUS: success"
+fi # if test
+
