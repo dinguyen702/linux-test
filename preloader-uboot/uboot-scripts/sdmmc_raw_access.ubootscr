@@ -1,8 +1,5 @@
 #
-# Copyright 2010-2011 Calxeda, Inc.
-# Copyright 2012 Pavel Machek <pavel@denx.de>
-# Based on platsmp.c, Copyright (C) 2002 ARM Ltd.
-# Copyright (C) 2012 Altera Corporation
+# Copyright (C) 2014 Altera Corporation. All rights reserved.
 #
 # This program is free software; you can redistribute it and/or modify it
 # under the terms and conditions of the GNU General Public License,
@@ -25,7 +22,7 @@ setenv serverip 137.57.160.198
 setenv loadaddr1 0x010000
 setenv loadaddr2 0x110000
 setenv startblk  2048
-setenv tftpentry /u/yvanderv/tmp/tests/uboot
+setenv tftpentry /u/yvanderv/linux/linux-test/preloader-uboot/data
 setenv success 0 # optimism, pass it on.
 
 # initialize
