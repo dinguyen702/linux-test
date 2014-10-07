@@ -46,7 +46,7 @@ DEVNODE=/sys/kernel/debug/clk
 status_fail=0
 
 OSC_RATE=25000000
-MPU_RATE=800000000
+MPU_RATE=925000000
 
 #===========================================================
 echo "Clock driver test"
