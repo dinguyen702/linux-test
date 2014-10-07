@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 usage()
 {
@@ -11,6 +11,17 @@ $(basename $0) [-i FPGA image file][-d fpga dev]
  -d = FPGA device name.  Defaults to $FPGA_DEV
 
 EOF
+}
+
+path_test()
+{
+    path=$1
+    if [ -e "$path" ]; then
+	echo "path exists: $path"
+    else
+	echo "FAIL - path does not exist: $path"
+	status_fail=1
+    fi
 }
 
 readreg()
@@ -41,6 +52,15 @@ dump_sdrctl()
     echo "sdrctl=$sdrctl : enables = $fpga2sdram"
 }
 
+test_return_code()
+{
+    ret=$1
+    if [ "$ret" != '0' ]; then
+	echo "ERROR - return code is $ret"
+	status_fail=1
+    fi
+}
+
 toggle()
 {
     status=$(cat $1/enable)
@@ -50,15 +70,7 @@ toggle()
 	* ) echo "what?"; exit 1 ;;
     esac
     echo $status > $1/enable
-}
-
-exit_if_fail()
-{
-    ret=$1
-    if [ "$ret" != '0' ]; then
-	echo "FAIL - return code is $ret"
-	exit
-    fi
+    test_return_code $?
 }
 
 #==============================
@@ -66,6 +78,7 @@ exit_if_fail()
 RAW_IMAGE=paris_hardware.rbf.gz
 FPGA_DEV=fpga0
 READ_SYSID=
+status_fail=0
 
 while [ -n "$1" ]; do
     case $1 in
@@ -78,12 +91,20 @@ while [ -n "$1" ]; do
 done
 DEVNODE=/dev/$FPGA_DEV
 
-dmesg | grep bridge
-echo
+path_test /sys/class/fpga-bridge
+path_test /sys/class/fpga-bridge/fpga2hps
+path_test /sys/class/fpga-bridge/fpga2hps/enable
+path_test /sys/class/fpga-bridge/hps2fpga
+path_test /sys/class/fpga-bridge/hps2fpga/enable
+path_test /sys/class/fpga-bridge/lwhps2fpga
+path_test /sys/class/fpga-bridge/lwhps2fpga/enable
+path_test /sys/class/fpga-bridge/fpga2sdram
+path_test /sys/class/fpga-bridge/fpga2sdram/enable
 
+# Program the FPGA
 echo "gunzip -c $RAW_IMAGE | dd of=/dev/$FPGA_DEV bs=1M"
 gunzip -c $RAW_IMAGE | dd of=/dev/$FPGA_DEV bs=1M
-exit_if_fail $?
+test_return_code $?
 
 echo
 cd /sys/class/fpga-bridge
@@ -114,13 +135,19 @@ done
 
 echo "enabling lw bridge"
 echo 1 > /sys/class/fpga-bridge/lwhps2fpga/enable
-exit_if_fail $?
+test_return_code $?
 
 if [ -n "$READ_SYSID" ]; then
     echo "reading sysid"
     memtool -32 0xff210000 1
-    exit_if_fail $?
+    test_return_code $?
 fi
 
 echo
-echo "PASS"
+if [ "$status_fail" == 0 ]; then
+    echo "PASS"
+else
+    echo "FAIL due to failures already listed above"
+fi
+
+exit $status_fail
