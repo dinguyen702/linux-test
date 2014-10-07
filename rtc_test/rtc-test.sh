@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 usage()
 {
@@ -16,9 +16,9 @@ path_test()
 {
     path=$1
     if [ -e "$path" ]; then
-	echo "HAPPY - path exists: $path"
+	echo "path exists: $path"
     else
-	echo "UNHAPPY - path does not exist: $path"
+	echo "FAIL - path does not exist: $path"
 	status_fail=1
     fi
 }
@@ -38,6 +38,15 @@ sysfs_test()
     fi
 }
 
+hwclock_time()
+{
+    hwclock | cut -c1-24
+}
+
+date_time()
+{
+    date +'%a %b %_d %T %Y'
+}
 
 #===========================================================
 echo "rtc test"
@@ -68,8 +77,12 @@ path_test $SYSFS/time
 path_test $SYSFS/date
 path_test $PROC
 
-hw_tm="$(hwclock | cut -d' ' -f1-5)"
-sys_tm="$(date +'%a %b %d %T %Y')"
+# Angstrom issue:
+# Must set system clock to something other than 1970:
+date 010112002000
+
+hw_tm="$(hwclock_time)"
+sys_tm="$(date_time)"
 echo
 echo "rtc time    : $hw_tm"
 echo "system time : $sys_tm"
@@ -77,14 +90,14 @@ echo "system time : $sys_tm"
 echo
 echo "Setting hwclock from system clock and reading again"
 hwclock --systohc
-hw_tm="$(hwclock | cut -d' ' -f1-5)"
-sys_tm="$(date +'%a %b %d %T %Y')"
+hw_tm="$(hwclock_time)"
+sys_tm="$(date_time)"
 echo "rtc time    : $hw_tm"
 echo "system time : $sys_tm"
 
 for tries in 1 2 3 4; do
-    hw_tm="$(hwclock | cut -d' ' -f1-5)"
-    sys_tm="$(date +'%a %b %d %T %Y')"
+    hw_tm="$(hwclock_time)"
+    sys_tm="$(date_time)"
     if [ "$hw_tm" == "$sys_tm" ]; then
 	break
     fi
