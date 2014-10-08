@@ -61,15 +61,35 @@ test_return_code()
     fi
 }
 
-toggle()
+check_enable()
 {
+    if [ -n "$2" ]; then
+	echo "Verify that $1/enable == $2"
+    else
+	echo "Verify that $1/enable is 0 or 1 at least."
+    fi
     status=$(cat $1/enable)
     case $status in
-	0 ) status=1 ;;
-	1 ) status=0 ;;
-	* ) echo "what?"; exit 1 ;;
+	0 ) ;;
+	1 ) ;;
+	* ) echo "ERROR Invalid enable value read from $1/enable: $status";
+	    status_fail=1;;
     esac
-    echo $status > $1/enable
+    if [ -n "$2" ]; then
+	if [ "$2" != "$status" ]; then
+	    echo "ERROR expected enable = $2, but read $status"
+	    status_fail=1
+	fi
+    fi
+}
+
+set_enable()
+{
+    case $2 in
+	0 ) echo "disable $foo" ;;
+	1 ) echo "enable $foo" ;;
+    esac
+    echo $2 > $1/enable
     test_return_code $?
 }
 
@@ -109,26 +129,29 @@ test_return_code $?
 echo
 cd /sys/class/fpga-bridge
 ls -1
+echo
 for foo in fpga2hps hps2fpga lwhps2fpga
 do
-    echo "enable $foo"
-    toggle $foo
+    check_enable $foo
+    set_enable $foo 1
+    check_enable $foo 1
     dump_rstmgr
     echo
-    echo "disable $foo"
-    toggle $foo
+    set_enable $foo 0
+    check_enable $foo 0
     dump_rstmgr
     echo
 done
 echo
 for foo in *sdram*
 do
-    echo "enable $foo"
-    toggle $foo
+    check_enable $foo
+    set_enable $foo 1
+    check_enable $foo 1
     dump_sdrctl
     echo
-    echo "disable $foo"
-    toggle $foo
+    set_enable $foo 0
+    check_enable $foo 0
     dump_sdrctl
     echo
 done
