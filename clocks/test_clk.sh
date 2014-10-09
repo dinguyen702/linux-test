@@ -7,6 +7,11 @@ get_devkit_type()
     cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
 }
 
+get_kernel_version()
+{
+   uname -r | cut -c -4 | cut -c 3-5
+}
+
 clock_test()
 {
 case "$(get_devkit_type)" in
@@ -15,6 +20,11 @@ case "$(get_devkit_type)" in
     * ) echo "unable to identify board. exiting." ; exit 1 ;;
 esac
    echo "mpu_clk = $mpu_clk"
+
+   kernel_version="$(get_kernel_version)"
+
+   echo "kernel version = $kernel_version"
+   
 
    echo "Read frequency of $OSC_CLK"
    CMD="cat /sys/kernel/debug/clk/$OSC_CLK/clk_rate"
@@ -35,7 +45,11 @@ esac
    fi
 
    echo "Read frequency of $MPU_CLK"
-   CMD="cat /sys/kernel/debug/clk/$OSC_CLK/$MAINPLL_CLK/$MPU_CLK/clk_rate"
+   if [ "$kernel_version" -lt "$KERNEL_3_17" ]; then
+        CMD="cat /sys/kernel/debug/clk/$OSC_CLK/$MAINPLL_CLK/$MPU_CLK/clk_rate"
+   else
+        CMD="cat /sys/kernel/debug/clk/$MPU_CLK/clk_rate"
+   fi
    echo "$CMD"
    clk_rate=$($CMD)
    ret=$?
@@ -58,6 +72,8 @@ MAINPLL_CLK=main_pll
 MPU_CLK=mpuclk
 DEVNODE=/sys/kernel/debug/clk
 status_fail=0
+
+KERNEL_3_17=17
 
 OSC_RATE=25000000
 MPU_RATE_CYCLONE5=925000000
