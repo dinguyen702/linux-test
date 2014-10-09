@@ -1,7 +1,21 @@
 #!/bin/bash
 
+get_devkit_type()
+{
+    # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
+    # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
+    cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
+}
+
 clock_test()
 {
+case "$(get_devkit_type)" in
+    ArriaV ) mpu_clk=$MPU_RATE_ARRIA5 ;;
+    CycloneV ) mpu_clk=$MPU_RATE_CYCLONE5 ;;
+    * ) echo "unable to identify board. exiting." ; exit 1 ;;
+esac
+   echo "mpu_clk = $mpu_clk"
+
    echo "Read frequency of $OSC_CLK"
    CMD="cat /sys/kernel/debug/clk/$OSC_CLK/clk_rate"
    echo "$CMD"
@@ -32,8 +46,8 @@ clock_test()
    fi
 
    echo "clock rate of $MPU_CLK = $clk_rate"
-   if [ "$clk_rate" != "$MPU_RATE" ]; then
-        echo "Error, incorrect clock rate. Expecting $MPU_RATE"
+   if [ "$clk_rate" != "$mpu_clk" ]; then
+        echo "Error, incorrect clock rate. Expecting $mpu_clk"
 	status_fail=1
         return
    fi
@@ -46,7 +60,8 @@ DEVNODE=/sys/kernel/debug/clk
 status_fail=0
 
 OSC_RATE=25000000
-MPU_RATE=925000000
+MPU_RATE_CYCLONE5=925000000
+MPU_RATE_ARRIA5=1050000000
 
 #===========================================================
 echo "Clock driver test"
