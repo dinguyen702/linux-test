@@ -1,5 +1,12 @@
 #!/bin/sh
 
+get_devkit_type()
+{
+    # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
+    # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
+    cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
+}
+
 program_fpga()
 {
     echo "Programming FPGA with $RAW_IMAGE"
@@ -98,8 +105,14 @@ EOF
 echo "FPGA Manager Test"
 echo
 
+case "$(get_devkit_type)" in
+    ArriaV ) RAW_IMAGE=ghrd_5asxfb5h4.rbf.gz ;;
+    CycloneV ) RAW_IMAGE=paris_hardware.rbf.gz ;;
+    * ) echo "ERROR - unable to identify board from /proc."
+	status_fail=1 ;;
+esac
+
 BLKSIZE='1M'
-RAW_IMAGE=paris_hardware.rbf.gz
 FPGA_DEV=fpga0
 status_fail=0
 
