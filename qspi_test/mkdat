@@ -1,0 +1,12 @@
+filename=qspi-data-file
+echo Start of file >$filename
+
+var=10000000
+while [ $var -lt 10125000 ]
+do
+   echo $var >>$filename
+   var=$(( $var + 1 ))
+done
+
+echo End of file >>$filename
+

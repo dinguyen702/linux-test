@@ -1,27 +1,16 @@
 #!/bin/bash
 
 flash_erase /dev/mtd0 0 0
-#flash_erase /dev/mtd1 0 0
 
-echo Start of file >test.txt
-
-var=10000000
-while [ $var -lt 10125000 ]
-do
-   echo $var >>test.txt
-   var=$(( $var + 1 ))
-done
-
-echo End of file >>test.txt
-
-filesize=$(ls -l test.txt |awk -F" " '{ print $5 }')
+filename=qspi-data-file
+filesize=$(ls -l $filename |awk -F" " '{ print $5 }')
 
 echo filesize is $filesize
 
-flashcp test.txt /dev/mtd0
-mtd_debug read /dev/mtd0 0 $filesize test1.txt
+flashcp $filename /dev/mtd0
+mtd_debug read /dev/mtd0 0 $filesize qspi-data-out
 
-thesame=$(diff -q test.txt test1.txt|grep differ)
+thesame=$(diff -q $filename qspi-data-out|grep differ)
 
 if [ "$thesame" != "" ]
 then

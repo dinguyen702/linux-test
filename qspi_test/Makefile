@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-EXE =
+DATAFILES = qspi-data-file
 SCRIPTS = *.sh
 
 all :
@@ -8,5 +8,6 @@ all :
 install : $(SCRIPTS) $(EXE)
 	$(INSTALL) -d $(INSTALLPATH)
 	$(INSTALL) -m755 $? $(INSTALLPATH)
+	$(INSTALL) -m644 $(DATAFILES) $(INSTALLPATH)
 
 clean :
