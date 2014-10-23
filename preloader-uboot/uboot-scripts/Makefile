@@ -18,5 +18,5 @@ install: all
 	cp *.img /tftpboot/.
 
 clean:
-	rm -f $(RESULTS)
+	rm -f *.img
 	
