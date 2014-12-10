@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SPI_DEVNODE=spidev0.0
+SPI_DEVNODE=spidev32766.0
 ITERATIONS=0
 
 usage()
