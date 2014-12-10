@@ -12,6 +12,8 @@ http://www.pengutronix.de/software/socket-can/download/canutils/v4.0/canutils-4.
 and the libsocket library from;
 http://www.pengutronix.de/software/libsocketcan/download/libsocketcan-0.0.9.tar.bz2
 
+Copy these zipped files into the same directory. The instructions below assume that.
+
 Building the files:
 
 Libsocket library porting:
@@ -26,13 +28,14 @@ The generated library can be found under the __install/ directory.
 
 Can-Utils Cross Compiling:
 execute the following instructions:
-1) tar canutils-4.0.6.tar.bz2
-2) ./configure --host=arm-linux-gnueabihf --prefix=$PWD/__install \
+1) tar -xvjf canutils-4.0.6.tar.bz2
+2) cd canutils-4.0.6
+3) ./configure --host=arm-linux-gnueabihf --prefix=$PWD/__install \
       libsocketcan_LIBS=-lsocketcan LDFLAGS=-L$PWD/../libsocketcan-0.0.9/__install/lib \
       libsocketcan_CFLAGS=-I$PWD/../libsocketcan-0.0.9/__install/include \
       CFLAGS=-I$PWD/../libsocketcan-0.0.9/__install/include
-3) make
-4) make install
+4) make
+5) make install
 
 
 
