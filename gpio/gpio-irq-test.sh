@@ -1,7 +1,20 @@
 #!/bin/bash
 
-CYCONE5_BUTTONS="195 194 193 192"
-ARRIA5_BUTTONS="212 211 210 204"
+kver="$(uname -r | cut -c1-4)"
+
+case $kver in
+    3.10|3.11|3.12|3.13|3.14|3.15|3.16|3.17 )
+    CYCONE5_BUTTONS="195 194 193 192"
+    ARRIA5_BUTTONS="212 211 210 204"
+    ;;
+
+    # 3.18 has commit "gpio: Increase ARCH_NR_GPIOs to 512"
+    # commit 7ca267faba8ad097f57cb71c32ae1865de83241a
+    * )
+    CYCONE5_BUTTONS="451 450 449 448"
+    ARRIA5_BUTTONS="468 467 466 465"
+    ;;
+esac
 
 usage()
 {
