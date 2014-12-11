@@ -12,7 +12,7 @@ case $kver in
     # commit 7ca267faba8ad097f57cb71c32ae1865de83241a
     * )
     CYCONE5_BUTTONS="451 450 449 448"
-    ARRIA5_BUTTONS="468 467 466 465"
+    ARRIA5_BUTTONS="468 467 466 460"
     ;;
 esac
 
