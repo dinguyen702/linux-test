@@ -1,0 +1,35 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+send "ifconfig eth0 down\r"
+connect
+
+send "ifconfig eth0 mtu 3800 up\r"
+connect
+
+send "ifconfig eth0 down\r"
+connect 
+
+send "ifconfig eth0 mtu 1500 up\r"
+connect
+
+send "ifconfig eth0 down\r"
+connect 
+
+send "ifconfig eth0 mtu 8000 up\r"
+connect
+
+send "ifconfig eth0 down\r"
+connect 
+
+send "ifconfig eth0 mtu 1500 up\r"
+connect
+
+
+
+exit 0
+

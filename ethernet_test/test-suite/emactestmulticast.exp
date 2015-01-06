@@ -1,0 +1,41 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+
+set retv -1
+#spawn ./sendmc 192.199.1.1 225.1.1.1 5555 10 1400
+startHostMCSend $hostipv4 $mcastip $mcastport 10 1400
+send "$trgttools/recvmc $trgtipv4 $mcastip $mcastport 10\r"
+#send "./recvmc 192.199.1.2 225.1.1.1 5556 10\r"
+expect {
+	timeout 
+		{ puts "timeout\r"; exit 1; } 
+	-re "none\r"
+		{ puts "FAIL!\r";   exit 1; } 
+	-re "(0-9)*bytes\r"
+		{ puts "PASS!\r"; set retv 0; }
+	}
+connect
+
+set retv -1
+#spawn ./sendmc 192.199.1.1 225.1.1.1 5555 10 1400
+startHostMCSend $hostipv4 $mcastip $mcastport 10 1400
+send "$trgttools/recvmc $trgtipv4 225.1.1.2 $mcastport 10\r"
+#send "./recvmc 192.199.1.2 225.1.1.1 5556 10\r"
+expect {
+	timeout 
+		{ puts "timeout\r"; exit 1; } 
+	-re "none\r"
+		{ puts "PASS!\r";   set retv 0; } 
+	-re "(0-9)*bytes\r"
+		{ puts "something FAIL!\r"; exit 1; }
+	}
+connect
+
+
+exit $retv
+

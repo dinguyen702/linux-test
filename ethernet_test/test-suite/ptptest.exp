@@ -1,0 +1,11 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+startTargetPTP
+
+exit 0
+

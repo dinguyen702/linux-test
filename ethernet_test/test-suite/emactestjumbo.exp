@@ -1,0 +1,177 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+sethostLinkAuto
+settrgtLinkAuto
+
+sleep 5
+
+remVlanHost $hostethXport $VLANid
+remVlanTrgt $trgtethXport $VLANid
+
+addVlanTrgt $trgtethXport $VLANid $vlantrgtipv4 $vlantrgtipv6 1500
+addVlanHost $hostethXport $VLANid $vlanhostipv4 $vlanhostipv6 1500
+
+
+set rr [checkHostPingv4 $vlanhostipv4]
+	if {$rr == 0} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv4 $vlantrgtipv4]
+	if {$rr == 0} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkHostPingv6 $vlanhostipv6]
+	if {$rr == 0} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv6 $vlantrgtipv6]
+	if {$rr == 0} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkHostPingv4 $vlanhostipv4 3600]
+	if {$rr == 1} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv4 $vlantrgtipv4 3600]
+	if {$rr == 1} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkHostPingv6 $vlanhostipv6 3600]
+	if {$rr == 1} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv6 $vlantrgtipv6 3600]
+	if {$rr == 1} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+## enable jumbo frames
+remVlanHost $hostethXport 100
+remVlanTrgt $trgtethXport 100
+
+addVlanTrgt $trgtethXport 100 $vlantrgtipv4 $vlantrgtipv6 3700
+addVlanHost $hostethXport 100 $vlanhostipv4 $vlanhostipv6 8000
+
+
+set rr [checkHostPingv4 $vlanhostipv4]
+	if {$rr == 0} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv4 $vlantrgtipv4]
+	if {$rr == 0} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkHostPingv6 $vlanhostipv6]
+	if {$rr == 0} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv6 $vlantrgtipv6]
+	if {$rr == 0} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkHostPingv4 $vlanhostipv4 3600]
+	if {$rr == 0} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv4 $vlantrgtipv4 3600]
+	if {$rr == 0} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkHostPingv6 $vlanhostipv6 3600]
+	if {$rr == 0} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv6 $vlantrgtipv6 3600]
+	if {$rr == 0} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+
+
+
+set rr [checkHostPingv4 $vlanhostipv4 7000]
+	if {$rr == 1} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv4 $vlantrgtipv4 7000]
+	if {$rr == 1} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkHostPingv6 $vlanhostipv6 7000]
+	if {$rr == 1} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+set rr [checkTrgtPingv6 $vlantrgtipv6 7000]
+	if {$rr == 1} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+
+
+set rr [checkHostPingv4 $vlanhostipv4 4000]
+	if {$rr == 1} {
+		puts "checkHostIPv4 VLAN failed!\r"
+		exit 1
+	}
+
+#set rr [checkTrgtPingv4 $vlantrgtipv4 4000]
+#	if {$rr == 1} {
+#		puts "checkHostIPv4 VLAN failed!\r"
+#		exit 1
+#	}
+
+set rr [checkHostPingv6 $vlanhostipv6 4000]
+	if {$rr == 1} {
+		puts "checkHostIPv6 VLAN failed!\r"
+		exit 1
+	}
+
+#set rr [checkTrgtPingv6 $vlantrgtipv6 4000]
+#	if {$rr == 1} {
+#		puts "checkHostIPv6 VLAN failed!\r"
+#		exit 1
+#	}
+exit 0
+

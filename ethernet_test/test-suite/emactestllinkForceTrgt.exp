@@ -1,0 +1,93 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+## change the host link parameters to known state (auto), 
+## then cycle through { 10, 100, 1000} { duplex=full, half }
+## checking target to make sure it's line
+## parameters match. The invert.
+##
+sethostLinkAuto
+settrgtLinkAuto
+sleep 5
+
+foreach linkspeed [list 10 100 1000 ] {
+   foreach linkduplex [list full half] {
+
+        puts "host foreach linkspeed $linkspeed linkduplex $linkduplex \r\n"
+
+	sethostLinkAuto
+	settrgtLinkAuto
+	sleep 5
+ 
+        if { $linkspeed == 1000  &&  $linkduplex == "half" } {
+		puts "WARNING!! 1000Mbps and half duplex not supported!\r"
+	} elseif { $linkspeed == 1000 && $s1000Support == 0 } {
+		puts "WARNING!! 1000Mbps not supported!\r"
+	} else {
+		sethostLink $linkspeed $linkduplex 
+		sleep 5
+		set hspeed [gethostSpeed]
+		puts "Host speed $hspeed \r"
+		set hduplex [gethostDuplex]
+		puts "Host duplex $hduplex \r"
+		set tspeed [gettrgtSpeed]
+		puts "Target speed $tspeed \r"
+		set tduplex [gettrgtDuplex]
+		puts "Target duplex $tduplex \r"
+		
+		if { $linkduplex == "full" } {
+		    if { $tduplex == 0 } {
+		        puts "FAIL!! (5) duplex unexpected! \r"
+			exit 1
+		    }
+		 
+		    if { $hduplex == 0 } {
+		        puts "FAIL!! (6) duplex unexpected! \r"
+			exit 1
+		    }
+		}
+
+		if { $linkduplex == "half" } {
+		    if { $tduplex == 1 } {
+		        puts "FAIL!! (7) duplex unexpected! \r"
+			exit 1
+		    }
+		    if { $hduplex == 1 } {
+		        puts "FAIL!! (8) duplex unexpected! \r"
+			exit 1
+		    }
+		}
+
+		if { $linkspeed != $tspeed } {
+		    puts "FAIL!! (9) link speed unexpected!\r"
+		    exit 1
+		}
+
+		if { $linkspeed != $hspeed } {
+		    puts "FAIL!! (10) link speed unexpected!\r"
+		    exit 1
+		}
+		set rr [checkHostPingv4 $hostipv4 ] 
+		if {$rr == 0} {
+			puts "checkHostIPv4 failed!\r"
+			exit 1
+		}
+		puts "checkHostIPv4 $rr\r"
+		sleep 1
+
+		set rr [checkTrgtPingv4 $trgtipv4 ]
+		if {$rr == 0} {
+			puts "checkTargetIPv4 failed!\r"
+			exit 1
+		}
+		send_user "checkTargetIPv4 $rr\r"
+		sleep 1
+	}
+   }
+}
+
+exit 0

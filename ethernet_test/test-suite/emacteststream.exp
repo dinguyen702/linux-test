@@ -1,0 +1,137 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+# 1) make sure files are empty on the host and target - delete them.
+# 2) create a file locally to scp to the target. Make sure it's 
+#    larger than a few MTUs.
+# 3) SCP the file to the target, copy back and compare.
+# 4) Change the MTUs, try again
+# 5) Do the same across VLAN connections
+# 6) Anything else? Link speeds? Lots of perverted stuff we could do :)
+#
+
+remVlanHost $hostethXport $VLANid
+remVlanTrgt $trgtethXport $VLANid
+
+addVlanTrgt $trgtethXport $VLANid $vlantrgtipv4 $vlantrgtipv6 1500
+addVlanHost $hostethXport $VLANid $vlanhostipv4 $vlanhostipv6 1500
+
+set retv 1
+set rc [copyCompareFile $trgtipv4]
+
+set rc [ catch {exec cmp -s randfile.test trandfile.test} output]
+if {$rc == 0} {
+	puts "no difference\n"
+	set retv 0
+} else {
+	puts "diff detected\n"
+	exit $retv	
+}
+
+## clean up
+remHostFiles
+remTrgtFile 
+
+
+set retv 1
+set rc [copyCompareFile $vlantrgtipv4]
+
+set rc [ catch {exec cmp -s randfile.test trandfile.test} output]
+if {$rc == 0} {
+	puts "no difference\n"
+	set retv 0
+} else {
+	puts "diff detected\n"
+	exit $retv	
+}
+
+## clean up
+remHostFiles
+remTrgtFile 
+
+remVlanHost $hostethXport $VLANid
+remVlanTrgt $trgtethXport $VLANid
+
+addVlanTrgt $trgtethXport $VLANid $vlantrgtipv4 $vlantrgtipv6 3080
+addVlanHost $hostethXport $VLANid $vlanhostipv4 $vlanhostipv6 8000
+
+set retv 1
+set rc [copyCompareFile $trgtipv4]
+
+set rc [ catch {exec cmp -s randfile.test trandfile.test} output]
+if {$rc == 0} {
+	puts "no difference\n"
+	set retv 0
+} else {
+	puts "diff detected\n"
+	exit $retv	
+}
+
+## clean up
+remHostFiles
+remTrgtFile 
+
+set retv 1
+set rc [copyCompareFile $trgtipv4]
+
+set rc [ catch {exec cmp -s randfile.test trandfile.test} output]
+if {$rc == 0} {
+	puts "no difference\n"
+	set retv 0
+} else {
+	puts "diff detected\n"
+	exit $retv	
+}
+
+## clean up
+remHostFiles
+remTrgtFile 
+
+remVlanHost $hostethXport $VLANid
+remVlanTrgt $trgtethXport $VLANid
+
+addVlanTrgt $trgtethXport $VLANid $vlantrgtipv4 $vlantrgtipv6 2030
+addVlanHost $hostethXport $VLANid $vlanhostipv4 $vlanhostipv6 8000
+
+set retv 1
+set rc [copyCompareFile $trgtipv4]
+
+set rc [ catch {exec cmp -s randfile.test trandfile.test} output]
+if {$rc == 0} {
+	puts "no difference\n"
+	set retv 0
+} else {
+	puts "diff detected\n"
+	exit $retv	
+}
+
+## clean up
+remHostFiles
+remTrgtFile 
+
+set retv 1
+set rc [copyCompareFile $trgtipv4]
+
+set rc [ catch {exec cmp -s randfile.test trandfile.test} output]
+if {$rc == 0} {
+	puts "no difference\n"
+	set retv 0
+} else {
+	puts "diff detected\n"
+	exit $retv	
+}
+
+## clean up
+remHostFiles
+remTrgtFile 
+
+remVlanHost $hostethXport $VLANid
+remVlanTrgt $trgtethXport $VLANid
+
+exit $retv
+
+   

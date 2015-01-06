@@ -1,0 +1,46 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+sethostLinkAuto
+settrgtLinkAuto
+
+sleep 5
+
+##
+## Note this feature in the driver for the Altera implementation
+## is probably broken. The PHY we're using does not appear to support
+## EEE, and reports capability for 10G eee for base T and KR. 
+## This whole issue bears further investigation, there appear to be issues
+## in the driver and/or integration with the generic PHY driver
+##
+## I'm setting this issue aside for now to focus on more important
+## issues since this is small in the big picture of all issues. 
+##
+
+# default
+send "$trgttools/ethtool --show-eee $trgtethXport\r"
+expect {
+	timeout
+		{ set retv -1 }
+	"Cannot get EEE settings: Operation not permitted"
+		{ set retv 0 }
+	}
+connect
+
+send "$trgttools/ethtool --set-eee $trgtethXport eee off\r"
+
+send "$trgttools/ethtool --show-eee $trgtethXport\r"
+expect {
+	timeout
+		{ set retv -1 }
+	"Cannot get EEE settings: Operation not permitted"
+		{ set retv 0 }
+	}
+connect
+
+
+exit 0

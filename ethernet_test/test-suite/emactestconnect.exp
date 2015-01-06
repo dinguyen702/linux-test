@@ -1,0 +1,77 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+sethostLinkAuto
+settrgtLinkAuto
+
+sleep 5
+
+configureHost $hostipv6
+
+send "/home/root/tools/ifconfig\n"
+expect {
+	timeout
+		{ send_user "Telnet timed out\n" ; exit 1 }
+	"root@socfpga_cyclone5:~#"
+	}
+
+send "/home/root/tools/ifconfig $trgtethXport $trgtipv4\n"
+connect
+
+send "/home/root/tools/ifconfig $trgtethXport inet6 add $trgtipv6/64\n"
+connect
+
+send "/home/root/tools/ifconfig\r"
+connect
+
+if {$rr == 0} {
+	puts "Cannot connect to target $ip $localport"
+	exit 1
+}
+
+#startTargetPTP
+
+for { set pingmss 64 } { $pingmss < $maxmss } { incr pingmss $mssincr } {
+
+	set rr [checkHostPingv4 $hostipv4 $pingmss] 
+	if {$rr == 0} {
+		puts "checkHostIPv4 failed!\r"
+		exit 1
+	}
+	puts "checkHostIPv4 $rr\r"
+	sleep 1
+
+	set rr [checkTrgtPingv4 $trgtipv4 $pingmss]
+	if {$rr == 0} {
+		puts "checkTargetIPv4 failed!\r"
+		exit 1
+	}
+	send_user "checkTargetIPv4 $rr\r"
+	sleep 1
+
+	set rr [checkHostPingv6 $hostipv6 $pingmss] 
+	if {$rr == 0} {
+		puts "checkHostIPv6 failed!\r"
+		exit 1
+	}
+	puts "checkHostIPv6 $rr\r"
+	sleep 1
+
+	set rr [checkTrgtPingv6 $trgtipv6 $pingmss]
+	if {$rr == 0} {
+		puts "checkTargetIPv6 failed!\r"
+		exit 1
+	}
+	send_user "checkTargetIPv6 $rr\r"
+}
+send_user "\r\ntest passed!\r\n"
+
+exit 0
+
+
+
+

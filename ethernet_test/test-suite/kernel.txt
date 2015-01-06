@@ -1,0 +1,97 @@
+root@socfpga_cyclone5:~# ifconfig
+eth0      Link encap:Ethernet  HWaddr 00:11:22:33:44:23  
+          inet addr:192.199.1.2  Bcast:192.199.1.255  Mask:255.255.255.0
+          inet6 addr: fe80::211:22ff:fe33:4423/64 Scope:Link
+          UP BROADCAST RUNNING MULTICAST  MTU:3700  Metric:1
+          RX packets:646 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:687 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:144572 (141.1 KiB)  TX bytes:147602 (144.1 KiB)
+          Interrupt:152 Base address:0x4000 
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          inet6 addr: ::1/128 Scope:Host
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:40 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:40 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:4080 (3.9 KiB)  TX bytes:4080 (3.9 KiB)
+
+root@socfpga_cyclone5:~# skbuff: skb_over_panic: text:803747e8 len:4042 put:4042 head:bf068000 data:bf068042 tail:0xbf06900c end:0xbf068f40 dev:eth0
+------------[ cut here ]------------
+kernel BUG at net/core/skbuff.c:126!
+Internal error: Oops - BUG: 0 [#1] SMP ARM
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 3.12.0-00307-g507abb4-dirty #40
+task: 8075b958 ti: 80750000 task.ti: 80750000
+PC is at skb_panic+0x70/0x74
+LR is at irq_work_queue+0x74/0xb4
+pc : [<805223f0>]    lr : [<800b6c18>]    psr: 60000113
+sp : 80751d40  ip : 60000113  fp : 80751d74
+r10: 00000026  r9 : 00000001  r8 : 00000094
+r7 : bf068f40  r6 : bf068000  r5 : bf068042  r4 : bf06900c
+r3 : 00000000  r2 : 00000007  r1 : 80fdd460  r0 : 0000007b
+Flags: nZCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment kernel
+Control: 10c5387d  Table: 3f17404a  DAC: 00000015
+Process swapper/0 (pid: 0, stack limit = 0x80750248)
+Stack: (0x80751d40 to 0x80752000)
+1d40: 00000fca bf068000 bf068042 bf06900c bf068f40 bf912000 00000fca bf06900c
+1d60: 00000000 bf068f40 80751d94 80751d78 8040e1e0 8052238c bf912440 bfbb0840
+1d80: 00000fca 00000025 80751df4 80751d98 803747e8 8040e190 00000080 00000000
+1da0: 00000005 00000013 00000000 00000040 bf912500 00000090 8075d2a8 00000100
+1dc0: bf912640 00000002 00000080 bf912500 80374570 00000291 00000040 0000012c
+1de0: 807520c0 80fdfb80 80751e3c 80751df8 8041ce14 8037457c 00000098 800101f4
+1e00: 8078d586 8078f6a4 0009cac7 80fdfb88 bf810414 00000001 8075208c 00000291
+1e20: 00000003 00000000 80750000 807583f0 80751ea4 80751e40 80029e5c 8041cd44
+1e40: bf810428 8078d489 00200000 0009cac6 807520c0 807901c0 0000000a 8075db6c
+1e60: 00000000 8074c420 80752080 8078d610 0000000c 00000100 80751ea4 60000193
+1e80: 00000098 00000000 fee00100 00000000 8078d487 807583f0 80751ebc 80751ea8
+1ea0: 8002a0a8 80029d24 807583f4 8074dd18 80751ed4 80751ec0 8002a33c 8002a054
+1ec0: 00000100 8074dd18 80751ef4 80751ed8 8000fddc 8002a2c4 00000100 fee0010c
+1ee0: 80758e1c 80751f18 80751f14 80751ef8 8000855c 8000fd94 800101f4 60000013
+1f00: ffffffff 80751f4c 80751f6c 80751f18 80014240 8000852c 002eafb2 00000000
+1f20: 002eafb2 00000000 80750000 8078db38 00000000 80528dc0 00000000 8078d487
+1f40: 807583f0 80751f6c 80751f70 80751f60 800101f0 800101f4 60000013 ffffffff
+1f60: 80751fa4 80751f70 800671ac 800101c4 413fc090 00000000 80751f94 80758af8
+1f80: 8078f880 807327a0 80fdab40 00000000 413fc090 00000000 80751fb4 80751fa8
+1fa0: 8051dc8c 80067100 80751ff4 80751fb8 806f8ae0 8051dc14 ffffffff ffffffff
+1fc0: 806f85c0 00000000 00000000 807327a0 00000000 10c5387d 8075838c 8073279c
+1fe0: 8075c9f8 0000406a 00000000 80751ff8 00008074 806f882c 00000000 00000000
+[<805223f0>] (skb_panic+0x70/0x74) from [<8040e1e0>] (skb_put+0x5c/0x60)
+[<8040e1e0>] (skb_put+0x5c/0x60) from [<803747e8>] (stmmac_poll+0x278/0x660)
+[<803747e8>] (stmmac_poll+0x278/0x660) from [<8041ce14>] (net_rx_action+0xdc/0x200)
+[<8041ce14>] (net_rx_action+0xdc/0x200) from [<80029e5c>] (__do_softirq+0x144/0x2c8)
+[<80029e5c>] (__do_softirq+0x144/0x2c8) from [<8002a0a8>] (do_softirq+0x60/0x68)
+[<8002a0a8>] (do_softirq+0x60/0x68) from [<8002a33c>] (irq_exit+0x84/0xbc)
+[<8002a33c>] (irq_exit+0x84/0xbc) from [<8000fddc>] (handle_IRQ+0x54/0xa0)
+[<8000fddc>] (handle_IRQ+0x54/0xa0) from [<8000855c>] (gic_handle_irq+0x3c/0x6c)
+[<8000855c>] (gic_handle_irq+0x3c/0x6c) from [<80014240>] (__irq_svc+0x40/0x50)
+Exception stack(0x80751f18 to 0x80751f60)
+1f00:                                                       002eafb2 00000000
+1f20: 002eafb2 00000000 80750000 8078db38 00000000 80528dc0 00000000 8078d487
+1f40: 807583f0 80751f6c 80751f70 80751f60 800101f0 800101f4 60000013 ffffffff
+[<80014240>] (__irq_svc+0x40/0x50) from [<800101f4>] (arch_cpu_idle+0x3c/0x40)
+[<800101f4>] (arch_cpu_idle+0x3c/0x40) from [<800671ac>] (cpu_startup_entry+0xb8/0x244)
+[<800671ac>] (cpu_startup_entry+0xb8/0x244) from [<8051dc8c>] (rest_init+0x84/0x88)
+[<8051dc8c>] (rest_init+0x84/0x88) from [<806f8ae0>] (start_kernel+0x2c0/0x2cc)
+Code: 01a0c00e e58d7010 e58dc014 ebfff3de (e7f001f2) 
+---[ end trace 001b404d65dafc17 ]---
+Kernel panic - not syncing: Fatal exception in interrupt
+CPU1: stopping
+CPU: 1 PID: 0 Comm: swapper/1 Tainted: G      D      3.12.0-00307-g507abb4-dirty #40
+[<80017e0c>] (unwind_backtrace+0x0/0x104) from [<80013614>] (show_stack+0x20/0x24)
+[<80013614>] (show_stack+0x20/0x24) from [<80521ea0>] (dump_stack+0x78/0x90)
+[<80521ea0>] (dump_stack+0x78/0x90) from [<80015904>] (handle_IPI+0x138/0x154)
+[<80015904>] (handle_IPI+0x138/0x154) from [<80008588>] (gic_handle_irq+0x68/0x6c)
+[<80008588>] (gic_handle_irq+0x68/0x6c) from [<80014240>] (__irq_svc+0x40/0x50)
+Exception stack(0xbf8d5f50 to 0xbf8d5f98)
+5f40:                                     002a4374 00000000 002a4374 00000000
+5f60: bf8d4000 8078db38 00000001 80528dc0 00000000 8078d487 807583f0 bf8d5fa4
+5f80: bf8d5fa8 bf8d5f98 800101f0 800101f4 60030013 ffffffff
+[<80014240>] (__irq_svc+0x40/0x50) from [<800101f4>] (arch_cpu_idle+0x3c/0x40)
+[<800101f4>] (arch_cpu_idle+0x3c/0x40) from [<800671ac>] (cpu_startup_entry+0xb8/0x244)
+[<800671ac>] (cpu_startup_entry+0xb8/0x244) from [<800155ac>] (secondary_start_kernel+0x124/0x12c)
+[<800155ac>] (secondary_start_kernel+0x124/0x12c) from [<00008624>] (0x8624)
+
+

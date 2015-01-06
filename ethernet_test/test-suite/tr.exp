@@ -1,0 +1,4 @@
+#!/usr/bin/expect
+source parameters.exp
+
+spawn sudo ethtool -s $hostethXport autoneg on advertise $adv

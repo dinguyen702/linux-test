@@ -1,0 +1,30 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+configHostJumbo $hostethXport 8000
+
+send "/home/root/tools/ifconfig $trgtethXport $trgtipv4\n"
+connect
+
+send "$trgttools/ifconfig eth0 down\r"
+connect
+
+send "$trgttools/ifconfig eth0 mtu 3700 up\r"
+connect
+
+send "$trgttools/sockperf sr --no-rdtsc --tcp &\r"
+connect
+sleep 10
+
+spawn /home/vince/test/sockperf tp -i $trgtipv4 --tcp -m 62000
+wait
+sleep 10
+
+connect
+
+exit 0
+

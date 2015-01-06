@@ -1,0 +1,5 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+puts "config1\r"

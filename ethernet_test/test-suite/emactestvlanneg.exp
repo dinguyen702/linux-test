@@ -1,0 +1,16 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+sethostLinkAuto
+settrgtLinkAuto
+
+sleep 5
+
+configureHost $hostipv6
+
+exit 1
+

@@ -1,0 +1,71 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+sethostLinkAuto
+settrgtLinkAuto
+
+
+sleep 5
+
+send "$trgttools/ethtool -T $trgtethXport\r"
+expect {
+	timeout 
+		{ set retv -1 }
+	"PTP Hardware Clock: none"
+		{ set retv 0 }
+	}
+connect
+puts "retv $retv\r"
+
+
+send "$trgttools/hwstamp_ctl -i $trgtethXport -r 1 -t 1\r"
+expect {
+	timeout
+		{set retv -1}
+	"SIOCSHWTSTAMP failed"
+		{set retv -1}
+	"tx_type 1"
+		{set retv -1}
+	}
+connect
+puts "retv $retv\r"
+
+send "$trgttools/ethtool -T $trgtethXport\r"
+expect {
+	timeout 
+		{ set retv -1 }
+	"PTP Hardware Clock: 0"
+		{ set retv 0 }
+	}
+connect
+puts "retv $retv\r"
+
+send "$trgttools/hwstamp_ctl -i $trgtethXport -r 0 -t 0\r"
+expect {
+	timeout
+		{set retv -1}
+	"SIOCSHWTSTAMP failed"
+		{set retv -1}
+	"tx_type 0"
+		{set retv -1}
+	}
+connect
+puts "retv $retv\r"
+
+send "$trgttools/ethtool -T $trgtethXport\r"
+expect {
+	timeout 
+		{ set retv -1 }
+	"PTP Hardware Clock: none"
+		{ set retv 0 }
+	}
+connect
+puts "retv $retv\r"
+
+puts "test ethtool tests\r"
+
+exit 0

@@ -1,0 +1,3 @@
+spawn sudo ifconfig $hostethXport up
+wait
+sleep 2

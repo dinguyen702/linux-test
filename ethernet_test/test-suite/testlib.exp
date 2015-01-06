@@ -1,0 +1,328 @@
+#!/usr/bin/expect
+source parameters.exp
+
+proc settrgtAdv { adv } {
+	global trgtethXport
+	global trgttools
+	send "$trgttools/ethtool -s $trgtethXport autoneg on advertise $adv\r"
+	connect
+}
+
+proc sethostAdv { adv } {
+	global hostethXport
+	spawn sudo ethtool -s $hostethXport autoneg on advertise $adv
+	wait
+}
+
+proc sethostLink { speed duplex } {
+	global hostethXport
+	spawn sudo ethtool -s $hostethXport speed $speed duplex $duplex
+	wait
+}
+
+proc settrgtLink { speed duplex } {
+	global trgtethXport
+	global trgttools
+	send "$trgttools/ethtool -s $trgtethXport speed $speed duplex $duplex\r"
+	connect
+}
+
+proc settrgtLinkAuto {} {
+	global trgtethXport
+	global trgttools
+	send "$trgttools/ethtool -s $trgtethXport autoneg on advertise 0x2f\r" 
+	connect
+}
+
+proc sethostLinkAuto {} {
+	global hostethXport
+	spawn sudo ethtool -s $hostethXport autoneg on advertise 0x2f
+	wait 
+}
+
+proc gethostSpeed {} {
+	global hostethXport
+	set retv -1
+	spawn /home/vince/test/linkspd $hostethXport
+	expect {
+		timeout
+			{ set retv -1 }
+		"10Mbps" 
+			{ set retv 10 }
+		"100Mbps" 
+			{ set retv 100 }
+		"1000Mbps" 
+			{ set retv 1000 }
+		"/-1\n"  
+			{ set retv -1 }
+	}
+	wait
+	return $retv
+}
+
+proc gethostDuplex {} {
+	global hostethXport
+	set retv -1
+	spawn /home/vince/test/linkduplex $hostethXport
+	expect {
+		timeout
+			{ set retv -1 }
+		"1d" 
+			{ set retv 1 }
+		"0d" 
+			{ set retv 0 }
+		"/-1\n"  
+			{ set retv -1 }
+	}
+	wait
+	return $retv
+}
+
+proc gettrgtSpeed {} {
+	global trgtethXport
+	global trgttools
+	set retv -1
+	send "$trgttools/linkspd $trgtethXport\r"
+	expect {
+		timeout
+			{ set retv -1 }
+		"10Mbps" 
+			{ set retv 10 }
+		"100Mbps" 
+			{ set retv 100 }
+		"1000Mbps" 
+			{ set retv 1000 }
+		"/-1\n"  
+			{ set retv -1 }
+	}
+	connect
+	return $retv
+}
+
+proc gettrgtDuplex {} {
+	global trgtethXport
+	global trgttools
+	set retv -1
+	send "$trgttools/linkduplex $trgtethXport\r"
+	expect {
+		timeout
+			{ set retv -1 }
+		"1d" 
+			{ set retv 1 }
+		"0d" 
+			{ set retv 0 }
+		"/-1\n"  
+			{ set retv -1 }
+	}
+	connect
+	return $retv
+}
+
+proc configureHost {ipv6} {
+	global hostethXport
+	spawn sudo ifconfig $hostethXport inet6 add $ipv6/64
+	wait 
+	spawn ifconfig
+	wait 
+	sleep 1
+}
+
+
+proc connect {} {
+	send "\r"
+	expect {
+ 		timeout
+			{ send_user "Telnet timed out\n" ; return 0 }
+ 		"login:"
+			{ send "root\r"; set rr [connect] }
+ 		"root@socfpga_cyclone5:~#"
+	}
+	sleep 1
+	return 1
+}
+
+proc checkTrgtPingv4 { ip { mtu 64 } } {
+	set rcode 1
+	spawn ping -M do -s $mtu -c 5 $ip
+	expect {
+		" 0%" { set rcode 1 }
+		" 0 received" { set rcode 0 }
+		" 100%" { set rcode 0 }
+		}
+	connect
+	return $rcode;
+}
+
+
+proc checkHostPingv4 { ip { mtu 64 } } {
+	global trgttools
+	set rcode 1
+	send "$trgttools/armping -M -s $mtu -c 5 $ip\r"
+	expect {
+		" 0%" { set rcode 1 }
+		" 0 received" { set rcode 0 }
+		" 100%" { set rcode 0 }
+		}
+	connect
+	return $rcode;
+}
+
+proc checkTrgtPingv6 { ip { mtu 64 } } {
+	set rcode 1
+	spawn ping6 -M do -s $mtu -c 5 $ip
+	expect {
+		" 0%" { set rcode 1 }
+		" 0 received" { set rcode 0 }
+		" 100%" { set rcode 0 }
+		}
+	connect
+	return $rcode;
+}
+
+
+proc checkHostPingv6 { ip { mtu 64 } } {
+	set rcode 1
+	send "/home/root/tools/ping6 -M do -s $mtu -c 5 $ip\r"
+	expect {
+		" 0%" { set rcode 1 }
+		" 0 received" { set rcode 0 }
+		" 100%" { set rcode 0 }
+		}
+	connect
+	return $rcode;
+}
+
+proc startTargetPTP {} {
+	global trgtethXport
+	global trgttools
+	send "./hwstamp_ctl -i $trgtethXport -r 1 -t 1\r"
+	send "$trgttools/ethtool -T $trgtethXport\r"
+	send "./ptp4l -i $trgtethXport -p /dev/ptp0 -H -m \r"
+
+	# spawning ssh, issuing ls causes
+	# target to crash - but don't know 
+	# if this sequence gets me back to 
+	# executing the tests - TODO after the
+	# crash is fixed.
+	#
+	spawn ssh root@192.199.1.2
+	send "ls\r"
+	sleep 10
+	send \003
+	set rconnect [connect]
+	sleep 2
+}
+
+proc addVlanHost { iface vlan ipv4 ipv6 mtu } {
+	spawn sudo vconfig add $iface $vlan
+	wait
+	sleep 2
+	spawn sudo ifconfig $iface mtu $mtu up
+	wait
+	sleep 2
+	spawn sudo ifconfig $iface.$vlan mtu $mtu up
+	wait
+	sleep 2
+	spawn sudo ifconfig $iface.$vlan inet6 add $ipv6/64
+	wait
+	sleep 2
+	spawn sudo ifconfig $iface.$vlan $ipv4 netmask 255.255.255.0
+	wait
+	sleep 2
+wait
+}
+
+proc addVlanTrgt { iface vlan ipv4 ipv6 mtu } {
+	global trgttools
+	send "$trgttools/vconfig add $iface $vlan\r"
+	connect
+	sleep 1
+	send "$trgttools/ifconfig $iface down\r"
+	connect
+	sleep 1
+	send "$trgttools/ifconfig $iface mtu $mtu up\r"
+	connect
+	sleep 1
+	send "$trgttools/ifconfig $iface.$vlan mtu $mtu up\r"
+	connect
+	sleep 1
+	send "$trgttools/ifconfig $iface.$vlan inet6 add $ipv6/64\r"
+	connect
+	sleep 1
+	send "$trgttools/ifconfig $iface.$vlan $ipv4 netmask 255.255.255.0\r"
+	connect
+	sleep 1
+}
+
+
+proc remVlanHost {iface vlan} {
+	spawn sudo vconfig rem $iface.$vlan
+	wait
+}
+
+proc remVlanTrgt {iface vlan} {
+	global trgttools
+	send "$trgttools/vconfig rem $iface.$vlan\r"
+	connect
+}
+
+proc remTrgtFile { } {
+	set retv -1
+	send  "rm /home/root/trandfile.test \r"
+	expect { 
+		timeout 
+			{ set retv -1 }
+		"root@socfpga_cyclone5:"
+			{ set retv 0 }
+		}
+	connect
+	return $retv
+}
+
+proc remHostFiles {} {
+	spawn rm ./randfile.test
+	wait
+	spawn rm ./trandfile.test
+	wait
+}
+
+proc makeLocalFile { ip } {
+	spawn dd if=/dev/urandom of=randfile.test bs=1024 count=32
+	wait
+	spawn scp randfile.test root@$ip:/home/root/trandfile.test
+	wait
+	spawn scp root@$ip:/home/root/trandfile.test ./trandfile.test
+	wait
+
+	# the following four lines are there for negative testing.
+	#spawn rm ./trandfile.test
+	#wait
+	#spawn dd if=/dev/urandom of=trandfile.test bs=1024 count=32
+	#wait
+}
+
+proc copyCompareFile { ip } {
+	remHostFiles
+	remTrgtFile 
+	makeLocalFile $ip
+}
+
+proc startHostMCSend { ip mcip mcport secs msgsize } {
+	spawn ./sendmc $ip $mcip $mcport $secs $msgsize
+}
+
+proc startHostPromiscSend { iface secs } {
+	spawn sudo ./rawsend $iface $secs
+}
+
+
+proc configHostJumbo { iface mtu } {
+	spawn sudo ifconfig $iface down
+	wait
+	sleep 1
+	spawn sudo ifconfig $iface mtu $mtu up
+	wait
+	sleep 1
+	wait
+}
+

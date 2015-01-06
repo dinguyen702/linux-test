@@ -1,0 +1,33 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn python nbreboot.py $nbootip $nboottrgtport 
+expect {
+	timeout 
+		{ set retv -1 }
+	"A0"
+		{ set retv 0 }
+	}
+
+send "cccc"
+spawn telnet $ip $localport
+expect {
+	timeout
+		{ send_user "Telnet timed out\n" ; return 0 }
+	"Hit any key to stop autoboot:"
+		{ send " \r"; set rr [connect] }
+}
+
+send "help\r"
+
+expect {
+	timeout
+		{ send_user "Telnet timed out\n" ; return 0 }
+	"version - print monitor, compiler and linker version"
+		{ set retv 0 }
+}
+
+
+exit $retv
+

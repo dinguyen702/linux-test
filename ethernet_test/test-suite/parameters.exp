@@ -1,0 +1,30 @@
+set timeout 30
+set ip localhost
+set localport 5000
+set user root
+set hostipv4 192.199.1.1
+set trgtipv4 192.199.1.2
+set trgtipv6 ::2
+set hostipv6 ::3
+
+set mcastip 225.1.1.1
+set mcastport 5555
+
+set vlanhostipv4 192.199.2.1
+set vlantrgtipv4 192.199.2.2
+set vlantrgtipv6 ::1:2
+set vlanhostipv6 ::1:3
+
+set pingmss  64
+set maxmss   1460
+set mssincr  512
+set trgtethXport  "eth0"
+set hostethXport  "eth1"
+set nbootip "192.168.1.100"
+set nboottrgtport "4"
+set novtechport "3"
+set VLANid 100
+
+set s1000Support 1
+
+set trgttools "/home/root/tools"

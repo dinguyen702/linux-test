@@ -1,0 +1,116 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+## change the host link parameters to known state (auto), 
+## then cycle through { 10, 100, 1000} { duplex=full, half }
+## checking target to make sure it's line
+## parameters match. The invert.
+##
+sethostLinkAuto
+settrgtLinkAuto
+
+sleep 5
+
+# Advertisement bit masks
+# 0x001     10 Half
+# 0x002     10 Full
+# 0x004     100 Half
+# 0x008     100 Full
+# 0x010     1000 Half (the soc supports this, but nothing else we have does)
+# 0x020     1000 Full
+#
+# [list 0x2f 0xf 0xe 0xd 0xc 0xb 0xa 0x9 0x8 0x7 0x6 0x5 0x4 0x3 0x2 0x1] 
+# exp speed
+# [list 1000 100 100 100 100 100 100 100 100 100 100 100 100 10  10  10]
+# exp duplex
+# [list full full full F F   F   F   F   F   H   H   H   H   F   F   H
+#
+#
+# 1) Set both sides to default values
+#      ethtool -s eth0 autoneg on advertise 0x2f
+# 2) Change the other side, cycling through all advertise values listed above,
+#      checking the peer for expected values. fail on unexpected value.
+#      ethtool -s eth0 autoneg on advertise $value
+# 3) Switch roles
+#
+#
+# 1) Set both sides to default values
+#      ethtool -s eth0 autoneg advertise 0x2f
+# 2) Change the other side, forcing link value, check peer for expected value
+#      ethtool -s eth0 autoneg off speed $speed duplex $duplex
+# 3) Switch roles
+#
+
+foreach adv [list 0x2f 0xf 0xe 0xd 0xc 0xb 0xa 0x9 0x8 0x7 0x6 0x5 0x4 0x3 0x2 0x1] \
+	exps [list 1000 100 100 100 100 100 100 100 100 100 100 100 100 10 10 10] \
+        expd [list 1 1 1 1 1 1 1 1 1 0 0 0 0 1 1 0 ] {
+
+	puts "adv $adv exps $exps expd $expd\r"
+	settrgtAdv $adv 
+	sleep 5
+	set hspeed [gethostSpeed]
+	puts "Host speed $hspeed"
+	set hduplex [gethostDuplex]
+	puts "Host duplex $hduplex"
+	if { $hduplex != $expd } {
+		puts "exp duplex ($expd) != actual duplex ($hduplex) \r"
+		exit 1
+	}
+
+	if { $hspeed != $exps } {
+		puts "exp speed ($exps) != actual speed ($hspeed) \r"
+		exit 1
+	}
+
+	set rr [checkHostPingv4 $hostipv4 ] 
+	if {$rr == 0} {
+		puts "checkHostIPv4 failed!\r"
+		exit 1
+	}
+	puts "checkHostIPv4 $rr\r"
+	sleep 1
+
+	set rr [checkTrgtPingv4 $trgtipv4 ]
+	if {$rr == 0} {
+		puts "checkTargetIPv4 failed!\r"
+		exit 1
+	}
+	send_user "checkTargetIPv4 $rr\r"
+	sleep 1
+}
+
+sethostLinkAuto
+settrgtLinkAuto
+sleep 5
+
+foreach adv [list 0x2f 0xf 0xe 0xd 0xc 0xb 0xa 0x9 0x8 0x7 0x6 0x5 0x4 0x3 0x2 0x1] \
+	exps [list 1000 100 100 100 100 100 100 100 100 100 100 100 100 10 10 10] \
+        expd [list 1 1 1 1 1 1 1 1 1 0 0 0 0 1 1 0 ] {
+
+	puts "adv $adv exps $exps expd $expd\r"
+	sethostAdv $adv 
+	sleep 5
+	set hspeed [gettrgtSpeed]
+	puts "Host speed $hspeed"
+	set hduplex [gettrgtDuplex]
+	puts "Host duplex $hduplex"
+	if { $hduplex != $expd } {
+		puts "FAIL!! exp duplex ($expd) != actual duplex ($hduplex) \r"
+		#exit 1
+	}
+
+	if { $hspeed != $exps } {
+		puts "FAIL!! exp speed ($exps) != actual speed ($hspeed) \r"
+		#exit 1
+	}
+}
+
+sethostLinkAuto
+settrgtLinkAuto
+sleep 5
+
+exit 0

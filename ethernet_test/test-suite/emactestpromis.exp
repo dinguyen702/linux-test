@@ -1,0 +1,39 @@
+#!/usr/bin/expect
+source parameters.exp
+source testlib.exp
+
+spawn telnet $ip $localport
+set rr [connect]
+
+
+set retv -1
+
+startHostPromiscSend $hostethXport 10
+send "$trgttools/rawrecv eth0 0 10\r"
+expect {
+	timeout 
+		{ puts "timeout\r"; exit 1; } 
+	-re "none\r"
+		{ puts "none!\r";   set retv 0; } 
+	-re "(0-9)*bytes\r"
+		{ puts "something!\r"; exit 1; }
+	}
+connect
+sleep 10
+
+set retv -1
+
+startHostPromiscSend $hostethXport 10
+send "$trgttools/rawrecv $trgtethXport 1 10\r"
+expect {
+	timeout 
+		{ puts "timeout\r"; exit 1; } 
+	-re "none\r"
+		{ puts "none!\r";   exit 1; } 
+	-re "(0-9)*bytes\r"
+		{ puts "something!\r"; set retv 0; }
+	}
+connect
+
+exit $retv
+
