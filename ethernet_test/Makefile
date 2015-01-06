@@ -1,6 +1,15 @@
 include ../Makefile.inc
 
-all : ethtool/ethtool vlan/vconfig ping/ping dut/duttest
+all : ethtool/ethtool vlan/vconfig ping/ping dut/duttest sockperf/src/sockperf
+
+sockperf/src/sockperf :
+	$(CD) sockperf && ./autogen.sh
+	$(CD) sockperf && ./configure CXX=${CROSS_COMPILE}g++ STRIP=${CROSS_COMPILE}strip LD=${CROSS_COMPILE}ld CC=${CROSS_COMPILE}gcc --host=i386
+	rm -f sockperf/src/sockperf
+	$(CD) sockperf && make
+	## next few lines build x86, need to figure out how to take care of that
+	#$(CD) sockperf && ./configure
+	#$(CD) sockperf && make
 
 ethtool/ethtool :
 	$(CD) ethtool && \
