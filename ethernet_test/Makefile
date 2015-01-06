@@ -45,6 +45,10 @@ install : ethtool/ethtool
 # ethtool's make clean isn't all that tidy
 clean :
 #	$(MAKE) -C ethtool clean
+	$(CD) dut && rm -f duttest
+	$(CD) ping && rm -f ping
+	$(CD) vlan && rm -f vconfig
+	$(CD) vlan && rm -f vconfig.o
 	$(CD) ethtool && \
 	$(RM) -rf .deps && \
 	$(RM) -f Makefile config.log config.status ethtool-config.h stamp-h1 ethtool *.o
