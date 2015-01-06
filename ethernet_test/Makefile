@@ -2,6 +2,16 @@ include ../Makefile.inc
 
 all : ethtool/ethtool vlan/vconfig ping/ping dut/duttest sockperf/src/sockperf
 
+#
+# netperf build is very dirty, that requires some work. Leaving the steps
+# below for reference for manaul building until the kinks
+# get worked out
+#
+#netperf-2.6.0/src/netperf :
+#	$(CD) netperf-2.6.0 && echo "ac_cv_func_setpgrp_void=yes" > config.cache
+#	$(CD) netperf-2.6.0 && ./configure CC=${CROSS_COMPILE}gcc LD=${CROSS_COMPILE}ld --host=i386 --config-cache
+#	$(CD) netperf-2.6.0 && make
+
 sockperf/src/sockperf :
 	$(CD) sockperf && ./autogen.sh
 	$(CD) sockperf && ./configure CXX=${CROSS_COMPILE}g++ STRIP=${CROSS_COMPILE}strip LD=${CROSS_COMPILE}ld CC=${CROSS_COMPILE}gcc --host=i386
