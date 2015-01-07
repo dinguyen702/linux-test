@@ -3,15 +3,15 @@
 LCD_DEVNODE=ttyLCD0
 SLEEP_TIME=
 SYS_DEVICES_SOC=
-for foo in '/sys/devices/soc.0' '/sys/devices/soc'; do
+
+cd /sys/devices
+for foo in 'soc.0' 'soc' 'platform/soc'; do
     if [ -e "$foo" ]; then    
-        SYS_DEVICES_SOC=$foo
+        SYS_DEVICES_SOC=$PWD/$foo
         break
     fi
 done
-
 echo $SYS_DEVICES_SOC
-
 if [ -z "$SYS_DEVICES_SOC" ]; then
     echo "Error, did not find normal sysfs paths"
     exit 1
