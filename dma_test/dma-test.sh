@@ -1,20 +1,29 @@
 #!/bin/bash
 
+BASE_URL=$1
+
+cwd=$(pwd)
+cd /
+rm modules.tar
+wget $BASE_URL/modules.tar
+tar xf modules.tar
+
 dmesg -c
 dmesg -n 3
 
-insmod /lib/modules/3.7.0/kernel/drivers/dma/pl330.ko
+modprobe pl330
+modprobe dmatest
 
-insmod /lib/modules/3.7.0/kernel/drivers/dma/dmatest.ko
+echo 10 >/sys/module/dmatest/parameters/iterations
 
-echo 10 >/sys/kernel/debug/dmatest/iterations
-
-echo Y >/sys/kernel/debug/dmatest/run
+echo Y >/sys/module/dmatest/parameters/run
 
 sleep 5
 
 # success_count=`grep -c "dma0chan[0-7].*0 failures" /var/log/messages`
 success_count=`dmesg|grep -c "dma0chan[0-7].*0 failures"`
+
+cd $cwd
 
 echo Success count is $success_count
 if [ $success_count = "8" ]
