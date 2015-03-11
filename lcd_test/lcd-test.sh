@@ -16,6 +16,12 @@ if [ -z "$SYS_DEVICES_SOC" ]; then
     echo "Error, did not find normal sysfs paths"
     exit 1
 fi
+cd /
+LCD_DEVICE="$(find $SYS_DEVICES_SOC -name '0-0028')"
+if [ -z "$LCD_DEVICE" ]; then
+    echo "Error, did not find 0-0028 under $SYS_DEVICES_SOC"
+    exit 1
+fi
 
 usage()
 {
@@ -58,7 +64,7 @@ display_looks_like()
 
 set_brightness()
 {
-    SYS_LCD_BRIGHTNESS=${SYS_DEVICES_SOC}/ffc04000.i2c/i2c-0/0-0028/brightness
+    SYS_LCD_BRIGHTNESS=${LCD_DEVICE}/brightness
     echo $1 > $SYS_LCD_BRIGHTNESS
     bright="$(cat $SYS_LCD_BRIGHTNESS)"
     if [ "$1" != "$bright" ]; then
