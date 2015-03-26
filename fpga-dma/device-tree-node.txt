@@ -1,0 +1,9 @@
+	fpgadma: fifo {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "altr,fpga-dma";
+		reg = <0xff230000 0x20>, <0xc0011000 0x400>;
+		reg-names = "csr", "data";
+		dmas = <&pdma 0 &pdma 1>;
+		dma-names = "tx", "rx";
+	};
