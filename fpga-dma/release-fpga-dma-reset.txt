@@ -1,0 +1,12 @@
+Here's how you can take the FPGA DMA channels out of reset in uboot.
+This has to be done for the fpga-dma test to work.
+
+First, you stop at the uboot prompt, then do the following commands:
+
+SOCFPGA_CYCLONE5 # md ffd05018 1
+ffd05018: 000000ff    ....
+SOCFPGA_CYCLONE5 # mw ffd05018 fc
+SOCFPGA_CYCLONE5 # md ffd05018 1 
+ffd05018: 000000fc    ....
+SOCFPGA_CYCLONE5 # run bootcmd
+
