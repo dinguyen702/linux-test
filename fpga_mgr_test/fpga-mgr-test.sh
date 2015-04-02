@@ -4,6 +4,7 @@ get_devkit_type()
 {
     # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
     # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
+    # Altera SOCFPGA Arria 10 ==> Arria10
     cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
 }
 
@@ -106,10 +107,17 @@ echo "FPGA Manager Test"
 echo
 
 case "$(get_devkit_type)" in
-    ArriaV ) RAW_IMAGE=ghrd_5asxfb5h4.rbf.gz ;;
-    CycloneV ) RAW_IMAGE=paris_hardware.rbf.gz ;;
-    * ) echo "ERROR - unable to identify board from /proc."
-	status_fail=1 ;;
+    ArriaV )   RAW_IMAGE=ghrd_5asxfb5h4.rbf.gz
+               MGR_NAME='Altera FPGA Manager'
+	       ;;
+    CycloneV ) RAW_IMAGE=paris_hardware.rbf.gz
+               MGR_NAME='Altera FPGA Manager'
+	       ;;
+    Arria10 )  RAW_IMAGE=
+               MGR_NAME='SoCFPGA Arria10 FPGA Manager'
+	       ;;
+    * )        echo "ERROR - unable to identify board from /proc."
+	       exit 1 ;;
 esac
 
 BLKSIZE='1M'
@@ -129,18 +137,19 @@ DEVNODE=/dev/$FPGA_DEV
 SYSFS=/sys/class/fpga/fpga0
 
 path_test $DEVNODE
-path_test $RAW_IMAGE
+if [ -n "$RAW_IMAGE" ]; then
+    path_test $RAW_IMAGE
+fi
 path_test $SYSFS/name
 path_test $SYSFS/status
 
-name_test 'Altera FPGA Manager'
+name_test "$MGR_NAME"
 echo
 
-#status_test 'power up phase'
-#echo
-
-program_fpga
-echo
+if [ -n "$RAW_IMAGE" ]; then
+    program_fpga
+    echo
+fi
 
 status_test 'user mode'
 
