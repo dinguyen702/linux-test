@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # internals
 SELF=$(basename $0)
@@ -10,7 +10,8 @@ source ${SELFDIR}/libeeprom.sh
 
 function get_eeprom_size() {
 
-    if egrep -q '(Cyclone V|Arria V) SoC Development Kit' ${DEVTREE_MODEL}  ; then
+    if egrep -q '(Cyclone V|Arria V) SoC Development Kit' ${DEVTREE_MODEL} || \
+       egrep -q 'Altera SOCFPGA Arria 10' ${DEVTREE_MODEL} ; then
         echo 8192 
     fi
 
@@ -19,7 +20,8 @@ function get_eeprom_size() {
 
 function get_eeprom_sysfs_path_data() {
 
-    if egrep -q '(Cyclone V|Arria V) SoC Development Kit' ${DEVTREE_MODEL}  ; then
+    if egrep -q '(Cyclone V|Arria V) SoC Development Kit' ${DEVTREE_MODEL} || \
+       egrep -q 'Altera SOCFPGA Arria 10' ${DEVTREE_MODEL} ; then
         echo "/sys/class/spi_master/spi0/spi0.0/eeprom"
     fi
 
