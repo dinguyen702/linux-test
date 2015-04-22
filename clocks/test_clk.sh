@@ -17,9 +17,13 @@ clock_test()
 case "$(get_devkit_type)" in
     ArriaV ) mpu_clk=$MPU_RATE_ARRIA5 ;;
     CycloneV ) mpu_clk=$MPU_RATE_CYCLONE5 ;;
+    Arria10) mpu_clk=$MPU_RATE_ARRIA10 ;;
     * ) echo "unable to identify board. exiting." ; exit 1 ;;
 esac
+   machine_type="$(get_devkit_type)"
    echo "mpu_clk = $mpu_clk"
+
+   echo "machine_type = $machine_type"
 
    kernel_version="$(get_kernel_version)"
 
@@ -46,9 +50,17 @@ esac
 
    echo "Read frequency of $MPU_CLK"
    if [ "$kernel_version" -lt "$KERNEL_3_17" ]; then
-        CMD="cat /sys/kernel/debug/clk/$OSC_CLK/$MAINPLL_CLK/$MPU_CLK/clk_rate"
+	if [ "$machine_type" == 'Arria10' ]; then
+		CMD="cat /sys/kernel/debug/clk/$OSC_CLK/$MAINPLL_CLK/$MPU_A10_CLK/clk_rate"
+	else
+	        CMD="cat /sys/kernel/debug/clk/$OSC_CLK/$MAINPLL_CLK/$MPU_CLK/clk_rate"
+	fi
    else
-        CMD="cat /sys/kernel/debug/clk/$MPU_CLK/clk_rate"
+	if [ "$machine_type" == 'Arria10' ]; then
+		CMD="cat /sys/kernel/debug/clk/$MPU_A10_CLK/clk_rate"
+	else
+	        CMD="cat /sys/kernel/debug/clk/$MPU_CLK/clk_rate"
+	fi
    fi
    echo "$CMD"
    clk_rate=$($CMD)
@@ -70,6 +82,7 @@ esac
 OSC_CLK=osc1
 MAINPLL_CLK=main_pll
 MPU_CLK=mpuclk
+MPU_A10_CLK=mpu_free_clk
 DEVNODE=/sys/kernel/debug/clk
 status_fail=0
 
@@ -78,6 +91,7 @@ KERNEL_3_17=17
 OSC_RATE=25000000
 MPU_RATE_CYCLONE5=925000000
 MPU_RATE_ARRIA5=1050000000
+MPU_RATE_ARRIA10=1200000000
 
 #===========================================================
 echo "Clock driver test"
