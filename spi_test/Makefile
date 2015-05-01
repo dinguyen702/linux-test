@@ -6,7 +6,7 @@ EXE = spi-test-loopback
 OBJS = spi-test-loopback.o
 PKG = spi-test-loopback.tar.gz
 SRC = spi-test-loopback.c Makefile
-SCRIPTS =
+SCRIPTS = *.sh
 
 all: 
 	$(CC) $(CFLAGS) spi-test-loopback.c -pthread -o $(EXE)
