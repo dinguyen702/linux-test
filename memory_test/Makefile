@@ -3,7 +3,7 @@ include ../Makefile.inc
 all : memtester/memtester
 
 memtester/memtester :
-	$(MAKE) -C memtester
+	echo "SKIPPING MEMTESTER"
 
 install : memory-test.sh memtester/memtester
 	$(INSTALL) -d $(INSTALLPATH)
