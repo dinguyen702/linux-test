@@ -1,6 +1,7 @@
 include ../Makefile.inc
 
-all : ethtool/ethtool vlan/vconfig ping/ping dut/duttest sockperf/src/sockperf
+#all : ethtool/ethtool vlan/vconfig ping/ping dut/duttest sockperf/src/sockperf
+all : vlan/vconfig ping/ping dut/duttest
 
 #
 # netperf build is very dirty, that requires some work. Leaving the steps

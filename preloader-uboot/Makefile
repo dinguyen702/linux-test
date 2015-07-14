@@ -11,12 +11,12 @@ uboot-scripts/tftp-test.img :
 	make all
 
 sdram-test/sdram-test.bin : 
-	$(CD) sdram-test && \
-	make all
+	$(if $(shell ls sdram-test/exclude),,$(CD) sdram-test && \
+	make all)
 
 tftp-test/tftp-test.bin : 
-	$(CD) tftp-test && \
-	make all
+	$(if $(shell ls tftp-test/exclude),,$(CD) tftp-test && \
+	make all)
 
 clean :
 	$(CD) uboot-scripts && make clean
