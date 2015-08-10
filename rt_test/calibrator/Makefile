@@ -9,7 +9,7 @@ SRC = calibrator.c Makefile
 SCRIPTS =
 
 all:
-	$(CC) $(CFLAGS) calibrator.c -lm -o calibrator
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) calibrator.c -lm -o calibrator
 	@file calibrator
 
 install : $(SCRIPTS) $(EXE)

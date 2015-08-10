@@ -9,7 +9,7 @@ SCRIPTS =
 all: rttest
 
 rttest: rttest.cpp 
-	$(CXX) -Wall rttest.cpp -o rttest -lrt 
+	$(CXX) $(EXTRA_CFLAGS) -Wall rttest.cpp -o rttest -lrt 
 	@file rttest
 
 install : $(SCRIPTS) $(EXE)

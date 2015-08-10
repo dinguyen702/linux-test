@@ -9,7 +9,7 @@ SRC = memtool.c Makefile
 SCRIPTS =
 
 all: $(EXE)
-	$(CC) $(CFLAGS) memtool.c -pthread -o memtool
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) memtool.c -pthread -o memtool
 	@file memtool
 
 install : $(SCRIPTS) $(EXE)

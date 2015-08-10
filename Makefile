@@ -16,7 +16,7 @@ INSTALLPATH ?= $(shell $(PWD))/unit_tests
 all :
 	@for subd in $(DIRS); do  \
 	    $(ECHO);             \
-	    $(MAKE) -C $$subd;   \
+	    $(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) -C $$subd;   \
 	done
 
 install :

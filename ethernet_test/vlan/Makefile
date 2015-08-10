@@ -20,16 +20,16 @@ vconfig.h: Makefile
 
 
 $(VCONFIG): $(VLAN_OBJS)
-	$(CC) $(CCFLAGS) $(LDFLAGS) -o $(VCONFIG) $(VLAN_OBJS) $(LDLIBS)
+	$(CC) $(CCFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) -o $(VCONFIG) $(VLAN_OBJS) $(LDLIBS)
 	$(STRIP) $(VCONFIG)
 
 macvlan_config: macvlan_config.c
-	$(CC) $(CCFLAGS) $(LDFLAGS) -o $@ $<
+	$(CC) $(CCFLAGS) $(EXTRA_CFLAGS) $(LDFLAGS) -o $@ $<
 
 $(ALL_OBJS): %.o: %.c %.h
 	@echo " "
 	@echo "Making $<"
-	$(CC) $(CCFLAGS) -c $<
+	$(CC) $(CCFLAGS) $(EXTRA_CFLAGS) -c $<
 
 clean:
 	rm -f *.o

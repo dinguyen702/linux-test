@@ -9,7 +9,7 @@ SCRIPTS =
 all: latency
 
 latency: latency.cpp OnlineStats.h QuantileEstimator.h
-	$(CXX) -Wall latency.cpp -o latency -lpthread -lrt
+	$(CXX) $(EXTRA_CFLAGS) -Wall latency.cpp -o latency -lpthread -lrt
 	@file latency
 
 install : $(SCRIPTS) $(EXE)

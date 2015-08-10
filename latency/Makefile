@@ -9,7 +9,7 @@ SRC = latency.c Makefile
 SCRIPTS =
 
 all:
-	$(CC) $(CFLAGS) latency.c -pthread -o latency 
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) latency.c -pthread -o latency 
 	@file latency
 
 install : $(SCRIPTS) $(EXE)

@@ -1,6 +1,7 @@
 # Copyright Altera 2013
 # All Rights Reserved.
 #
+include ../Makefile.inc
 
 C_SRC := spi-adc-test.c LTC2422.c
 CFLAGS := -g -O0 -Werror -Wall
@@ -21,7 +22,7 @@ ELF ?= spi-adc-test
 OBJ := $(patsubst %.c,%.o,$(C_SRC))
 
 .c.o:
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) -c $< -o $@
 
 .PHONY: all
 all: $(ELF)
@@ -31,7 +32,7 @@ clean:
 	$(RM) $(ELF) $(OBJ) *.map *.objdump
 
 $(ELF): $(OBJ) $(OBJS)
-	$(CC) $(CFLAGS) $(OBJ) -o $@ $(LDFLAGS)
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) $(OBJ) -o $@ $(LDFLAGS)
 	$(NM) $@ > $@.map
 
 LTC2422.c: LTC2422.h

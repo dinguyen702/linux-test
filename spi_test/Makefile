@@ -9,7 +9,7 @@ SRC = spi-test-loopback.c Makefile
 SCRIPTS = *.sh
 
 all: 
-	$(CC) $(CFLAGS) spi-test-loopback.c -pthread -o $(EXE)
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) spi-test-loopback.c -pthread -o $(EXE)
 	@file spi-test-loopback
 
 install : $(SCRIPTS) $(EXE)

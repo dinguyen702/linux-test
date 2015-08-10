@@ -9,7 +9,7 @@ SRC = watchdog-test.c Makefile
 SCRIPTS =
 
 all: $(EXE)
-	$(CC) $(CFLAGS) watchdog-test.c -pthread -o watchdog-test
+	$(CC) $(CFLAGS) $(EXTRA_CFLAGS) watchdog-test.c -pthread -o watchdog-test
 	@file watchdog-test
 
 install : $(SCRIPTS) $(EXE)

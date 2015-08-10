@@ -9,7 +9,7 @@ SCRIPTS =
 all: rtver
 
 rtver: rtver.cpp 
-	$(CXX) -Wall -fpermissive rtver.cpp -o rtver  
+	$(CXX) $(EXTRA_CFLAGS) -Wall -fpermissive rtver.cpp -o rtver  
 	@file rtver
 
 install : $(SCRIPTS) $(EXE)

@@ -11,3 +11,4 @@ LS	= ls
 PWD	= pwd
 RM	= rm
 SHELL	= /bin/bash
+EXTRA_CFLAGS =  -march=armv7-a -mfloat-abi=hard -mfpu=neon
