@@ -10,3 +10,4 @@
 *.o.*
 *.img
 *.map
+/unit_tests
