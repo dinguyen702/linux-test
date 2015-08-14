@@ -1,12 +1,12 @@
-nclude ../Makefile.inc
+include ../Makefile.inc
 
-EXE = 
+EXE =
 SCRIPTS = *.sh
 
-all:
+all :
 
-install: $(SCRIPTS) $(EXE)
+install : $(SCRIPTS) $(EXE)
 	$(INSTALL) -d $(INSTALLPATH)
 	$(INSTALL) -m755 $? $(INSTALLPATH)
 
-clean:
+clean :
