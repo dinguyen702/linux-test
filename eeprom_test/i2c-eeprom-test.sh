@@ -10,7 +10,7 @@ source ${SELFDIR}/libeeprom.sh
 
 function get_eeprom_size() {
 
-    if egrep -q '(Cyclone V|Arria V) SoC Development Kit' ${DEVTREE_MODEL} || \
+    if egrep -q '(Cyclone V|Arria V)' ${DEVTREE_MODEL} || \
        egrep -q 'Altera SOCFPGA Arria 10' ${DEVTREE_MODEL} ; then
         echo 4096
     fi
@@ -20,7 +20,7 @@ function get_eeprom_size() {
 
 function get_eeprom_sysfs_path_name() {
 
-    if egrep -q '(Cyclone V|Arria V) SoC Development Kit' ${DEVTREE_MODEL} || \
+    if egrep -q '(Cyclone V|Arria V)' ${DEVTREE_MODEL} || \
        egrep -q 'Altera SOCFPGA Arria 10' ${DEVTREE_MODEL} ; then
         echo "/sys/class/i2c-adapter/i2c-0/0-0051/name"
     fi
@@ -30,7 +30,7 @@ function get_eeprom_sysfs_path_name() {
 
 function get_eeprom_sysfs_path_data() {
 
-    if egrep -q '(Cyclone V|Arria V) SoC Development Kit' ${DEVTREE_MODEL} || \
+    if egrep -q '(Cyclone V|Arria V)' ${DEVTREE_MODEL} || \
        egrep -q 'Altera SOCFPGA Arria 10' ${DEVTREE_MODEL} ; then
         echo "/sys/class/i2c-adapter/i2c-0/0-0051/eeprom"
     fi
