@@ -83,10 +83,7 @@ else
 
 		version=$(cat ${hwmon_path}/max5_version)
 		echo "Arria10 MAX5 version is ${version}"
-		if [ "$version" != '0xA' ]; then 
-			echo "Error: The MAX5 version is incorrect."
-			status_fail=1
-		fi
+
 		# Check the current LED state.
 		led_state=$(cat ${hwmon_path}/max5_led)
 		echo "LED state is ${led_state}"
