@@ -1,0 +1,25 @@
+/dts-v1/ /plugin/;
+/ {
+	fragment@0 {
+		target-path = "/soc/base_fpga_region";
+		#address-cells = <1>;
+                #size-cells = <1>;
+		__overlay__ {
+			#address-cells = <1>;
+	                #size-cells = <1>;
+
+			firmware-name = "soc_system.rbf";
+
+			gpio@10040 {
+				compatible = "altr,pio-1.0";
+				reg = <0x10040 0x20>;
+				clocks = <0x2>;
+				altr,gpio-bank-width = <0x4>;
+				resetvalue = <0x0>;
+				#gpio-cells = <0x2>;
+				gpio-controller;
+			};
+		};
+	};
+};
+
