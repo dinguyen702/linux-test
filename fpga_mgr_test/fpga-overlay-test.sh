@@ -181,13 +181,32 @@ path_test $FPGA_MGR_SYSFS/state
 sysfs_cat_test $FPGA_MGR_SYSFS/name "$MGR_NAME"
 exit_if_fail $status_fail "FPGA manager not showing up in sysfs"
 
+# Test that FPGA bridges show up
+path_test /sys/class/fpga_bridge/br0
+path_test /sys/class/fpga_bridge/br1
+sysfs_cat_test /sys/class/fpga_bridge/br0/name lwhps2fpga
+sysfs_cat_test /sys/class/fpga_bridge/br1/name hps2fpga
+
 # Apply an overlay
 apply_overlay 0 socfpga_c5_overlay_1.dtb.o
 
+# Check bridge state
+sysfs_cat_test /sys/class/fpga_bridge/br0/state enabled
+sysfs_cat_test /sys/class/fpga_bridge/br1/state enabled
+
+# Check FPGA state
 sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
 
 # Remove an overlay
 remove_overlay 0
+
+# Check bridge state
+sysfs_cat_test /sys/class/fpga_bridge/br0/state disabled
+sysfs_cat_test /sys/class/fpga_bridge/br1/state disabled
+
+#================================================================
+# All done.
+#
 
 echo
 if [ "$status_fail" == 0 ]; then
