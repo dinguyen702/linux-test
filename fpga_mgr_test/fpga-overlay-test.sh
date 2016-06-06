@@ -119,11 +119,9 @@ EOF
 
 function bash_cmd()
 {
-    cmd=$1
-
-    echo "$ $cmd"
-    $cmd
-    exit_if_fail $? $cmd
+    echo "$ $@"
+    $@
+    exit_if_fail $? $@
 }
 
 #===========================================================
@@ -138,6 +136,7 @@ echo
 
 case "$(get_devkit_type)" in
     CycloneV ) MGR_NAME="Altera SOCFPGA FPGA Manager"
+	       RBF_NAME=soc_system-fpga-mgr-test-c5-1.rbf.gz
 	;;
     ArriaV )   echo "Board not supported for test"; exit 1;;
     Arria10 )  echo "Board not supported for test"; exit 1;;
@@ -162,9 +161,9 @@ OVERLAYS=/config/device-tree/overlays
 
 # Set up some file under /lib/firmware
 bash_cmd 'cp *.dtb.o /lib/firmware'
-bash_cmd 'cp soc_system-fpga-mgr-test-1.rbf.gz /lib/firmware'
+bash_cmd "cp $RBF_NAME /lib/firmware"
 bash_cmd 'cd /lib/firmware'
-bash_cmd 'gunzip -f soc_system-fpga-mgr-test-1.rbf.gz'
+bash_cmd "gunzip -f $RBF_NAME"
 bash_cmd 'cd -'
 echo
 
