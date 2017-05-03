@@ -36,36 +36,23 @@ function apply_overlay()
 	exit_error "Overlay $foo already exists"
     fi
 
-    mkdir $OVERLAYS/${overlay_dir}
-    exit_if_fail $? "mkdir $OVERLAYS/${overlay_dir}"
-
-    echo ${dtbo} > $OVERLAYS/${overlay_dir}/path
-    exit_if_fail $? "echo ${dtbo} > $OVERLAYS/${overlay_dir}/path"
-
-    if [ "$(cat $OVERLAYS/${overlay_dir}/status)" != 'applied' ]; then
-	exit_error "overlay status is $(cat $OVERLAYS/${overlay_dir}/status)"
-    fi
+    dtbt -a ${dtbo}
+    exit_if_fail $? "dtbt -a ${dtbo}"
 }
 
 function remove_overlay()
 {
     foo=$1
 
-    if [ ! -e $OVERLAYS/$foo ]; then
-	status_fail=1
-    fi	
-
     echo removing overlay $foo
 
-    rmdir $OVERLAYS/$foo
-    exit_if_fail $? "rmdir $OVERLAYS/$foo"
+    dtbt -r $foo
+    exit_if_fail $? "dtbt -r $foo"
 }
 
 function remove_all_overlays()
 {
-    for foo in 3 2 1 0; do
-	remove_overlay $foo
-    done
+    dtbt -r all
 }
 
 function path_test()
@@ -104,6 +91,24 @@ function sysfs_cat_test()
 	if [ "$expected" == 'power up phase' ]; then
 	    echo "need to power cycle possibly."
 	fi
+	status_fail=1
+    fi
+    echo
+}
+
+function bridge_state()
+{
+    br=$1
+    expected=$2
+
+    name="$(cat ${br}/name)"
+    value="$(cat ${br}/state)"
+
+    echo "FPGA bridge ${name} ($(basename $br)) state = $value"
+    if [ "$value" == "$expected" ]; then
+	echo "Correct"
+    else
+	echo "ERROR - expected $expected"
 	status_fail=1
     fi
     echo
@@ -153,7 +158,8 @@ done
 
 DEVNODE=/dev/$FPGA_DEV
 FPGA_MGR_SYSFS=/sys/class/fpga_manager/fpga0
-OVERLAYS=/config/device-tree/overlays
+CONFIGFS=/sys/kernel/config
+OVERLAYS=${CONFIGFS}/device-tree/overlays
 
 #=======================================================================
 # Start testing
@@ -168,10 +174,10 @@ bash_cmd 'cd -'
 echo
 
 # Test that configfs interface is present
-path_test /config
+path_test ${CONFIGFS}
 exit_if_fail $status_fail "/config not found."
 
-path_test /config/device-tree/overlays
+path_test ${OVERLAYS}
 exit_if_fail $status_fail "/config/device-tree/overlays not found."
 
 # Test that FPGA Manager shows up in sysfs
@@ -190,18 +196,18 @@ sysfs_cat_test /sys/class/fpga_bridge/br1/name hps2fpga
 apply_overlay 0 socfpga_c5_overlay_1.dtb.o
 
 # Check bridge state
-sysfs_cat_test /sys/class/fpga_bridge/br0/state enabled
-sysfs_cat_test /sys/class/fpga_bridge/br1/state enabled
+bridge_state /sys/class/fpga_bridge/br0 enabled
+bridge_state /sys/class/fpga_bridge/br1 enabled
 
 # Check FPGA state
 sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
 
 # Remove an overlay
-remove_overlay 0
+remove_overlay socfpga_c5_overlay_1.dtb.o
 
 # Check bridge state
-sysfs_cat_test /sys/class/fpga_bridge/br0/state disabled
-sysfs_cat_test /sys/class/fpga_bridge/br1/state disabled
+bridge_state /sys/class/fpga_bridge/br0 disabled
+bridge_state /sys/class/fpga_bridge/br1 disabled
 
 #================================================================
 # All done.
