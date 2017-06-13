@@ -1,4 +1,4 @@
-From 4935bd3285cb539a01beeae3fb14e002d396b4e6 Mon Sep 17 00:00:00 2001
+From 386f4e4be8b891ca4be09134445666d443115b7e Mon Sep 17 00:00:00 2001
 From: Alan Tull <atull@opensource.altera.com>
 Date: Mon, 23 May 2016 15:08:58 -0500
 Subject: [PATCH 2/2] arria10 dts for sysid test
@@ -14,10 +14,10 @@ Subject: [PATCH 2/2] arria10 dts for sysid test
  create mode 100644 arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts
 
 diff --git a/arch/arm/boot/dts/Makefile b/arch/arm/boot/dts/Makefile
-index a2de63f..d84e4bd 100644
+index c0c4471..f8b05e2 100644
 --- a/arch/arm/boot/dts/Makefile
 +++ b/arch/arm/boot/dts/Makefile
-@@ -750,6 +750,9 @@ dtb-$(CONFIG_ARCH_SOCFPGA) += \
+@@ -734,6 +734,9 @@ dtb-$(CONFIG_ARCH_SOCFPGA) += \
  	socfpga_cyclone5_sodia.dtb \
  	socfpga_cyclone5_trcom.dtb \
  	socfpga_cyclone5_vining_fpga.dtb \
@@ -29,7 +29,7 @@ index a2de63f..d84e4bd 100644
  	spear1310-evb.dtb \
 diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts
 new file mode 100644
-index 0000000..f0a87eb
+index 0000000..e0571dc
 --- /dev/null
 +++ b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts
 @@ -0,0 +1,34 @@
@@ -41,13 +41,13 @@ index 0000000..f0a87eb
 +		#size-cells = <1>;
 +		__overlay__ {
 +			partial-fpga-config;
-+			firmware-name = "ghrd_10as066n2.pr_partition.rbf";
++			firmware-name = "ghrd_10as066n2.pr_partition_0.rbf";
 +			#address-cells = <2>;
 +			#size-cells = <1>;
 +
 +			region-unfreeze-timeout-us = <4>;
 +			region-freeze-timeout-us = <4>;
-+			config-complete-timeout-us = <10>;
++			config-complete-timeout-us = <100>;
 +
 +			pr_region_0_pr_clk_100: pr_region_0_pr_clk_100 {
 +				compatible = "fixed-clock";
@@ -180,7 +180,7 @@ index 0000000..cd9d0ed
 +
 diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts
 new file mode 100644
-index 0000000..3f65d94
+index 0000000..1bf7194
 --- /dev/null
 +++ b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts
 @@ -0,0 +1,34 @@
@@ -192,13 +192,13 @@ index 0000000..3f65d94
 +		#size-cells = <1>;
 +		__overlay__ {
 +			partial-fpga-config;
-+			firmware-name = "alternate_persona.pr_partition.rbf";
++			firmware-name = "alternate_persona.pr_partition_0.rbf";
 +			#address-cells = <2>;
 +			#size-cells = <1>;
 +
 +			region-unfreeze-timeout-us = <4>;
 +			region-freeze-timeout-us = <4>;
-+			config-complete-timeout-us = <10>;
++			config-complete-timeout-us = <100>;
 +
 +			pr_region_0_pr_clk_100: pr_region_0_pr_clk_100 {
 +				compatible = "fixed-clock";
