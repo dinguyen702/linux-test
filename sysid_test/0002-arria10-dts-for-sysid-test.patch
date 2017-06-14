@@ -1,14 +1,14 @@
-From 386f4e4be8b891ca4be09134445666d443115b7e Mon Sep 17 00:00:00 2001
+From 01b53c863fbf0829688f55d43f837aae6d676eaf Mon Sep 17 00:00:00 2001
 From: Alan Tull <atull@opensource.altera.com>
 Date: Mon, 23 May 2016 15:08:58 -0500
 Subject: [PATCH 2/2] arria10 dts for sysid test
 
 ---
  arch/arm/boot/dts/Makefile                         |   3 +
- .../dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts   |  34 +++++++
- ...ocfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dts | 105 +++++++++++++++++++++
- ...ocfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts |  34 +++++++
- 4 files changed, 176 insertions(+)
+ .../dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts   |  33 +++++++
+ ...ocfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dts | 104 +++++++++++++++++++++
+ ...ocfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts |  33 +++++++
+ 4 files changed, 173 insertions(+)
  create mode 100644 arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts
  create mode 100644 arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dts
  create mode 100644 arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts
@@ -29,10 +29,10 @@ index c0c4471..f8b05e2 100644
  	spear1310-evb.dtb \
 diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts
 new file mode 100644
-index 0000000..e0571dc
+index 0000000..ba3754d
 --- /dev/null
 +++ b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl.dts
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,33 @@
 +/dts-v1/ /plugin/;
 +/ {
 +	fragment@1 {
@@ -66,13 +66,12 @@ index 0000000..e0571dc
 +		};
 +	};
 +};
-+
 diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dts
 new file mode 100644
-index 0000000..cd9d0ed
+index 0000000..728e787
 --- /dev/null
 +++ b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dts
-@@ -0,0 +1,105 @@
+@@ -0,0 +1,104 @@
 +/dts-v1/ /plugin/;
 +/ {
 +	fragment@0 {
@@ -177,13 +176,12 @@ index 0000000..cd9d0ed
 +		};
 +	};
 +};
-+
 diff --git a/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts
 new file mode 100644
-index 0000000..1bf7194
+index 0000000..ab365dd
 --- /dev/null
 +++ b/arch/arm/boot/dts/socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dts
-@@ -0,0 +1,34 @@
+@@ -0,0 +1,33 @@
 +/dts-v1/ /plugin/;
 +/ {
 +	fragment@1 {
@@ -217,7 +215,6 @@ index 0000000..1bf7194
 +		};
 +	};
 +};
-+
 -- 
 2.7.4
 
