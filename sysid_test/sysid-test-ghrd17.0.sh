@@ -241,6 +241,8 @@ check-sysid ff200900
 #
 
 echo
+uname -a
+echo
 if [ "$status_fail" == 0 ]; then
     echo "PASS"
 else
@@ -248,5 +250,3 @@ else
 fi
 
 exit $status_fail
-
-
