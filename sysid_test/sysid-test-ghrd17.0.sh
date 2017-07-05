@@ -66,7 +66,7 @@ function check-sysid()
 	    echo "GOOD:  $path expected to not exist and does not exist"
 	else
 	    echo "ERROR: $path expected to not exist and exists"
-	    error=1
+	    status_fail=1
 	fi
 	return
     fi
@@ -76,7 +76,7 @@ function check-sysid()
 	echo "GOOD:  $path == $got"
     else
 	echo "ERROR: $path == $got (expected $expected)"
-	error=1
+	status_fail=1
     fi
 }
 
