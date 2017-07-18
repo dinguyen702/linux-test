@@ -167,8 +167,8 @@ if [ -n "$ghrd" ]; then
 else
     DTBO_DIR=
     STATICREGION=socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
-    PERSONA0=socfpga_arria10_socdk_sdmmc_ghrd_ovl.dtb
-    PERSONA1=socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dtb
+    PERSONA0=persona0.dtb
+    PERSONA1=persona1.dtb
 fi
 
 #=======================================================================
