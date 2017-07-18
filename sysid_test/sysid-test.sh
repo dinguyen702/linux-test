@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#todo don't use error for status, use status_fail
-
 function get_devkit_type()
 {
     # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
@@ -33,7 +31,7 @@ function apply_overlay()
 
     echo "Applying overlay ${dtbo}"
 
-    dtbt -a ${dtbo}
+    dtbt ${DTBO_DIR} -a ${dtbo}
     exit_if_fail $? "dtbt -a ${dtbo}"
 }
 
@@ -45,11 +43,6 @@ function remove_overlay()
 
     dtbt -r $foo
     exit_if_fail $? "dtbt -r $foo"
-}
-
-function remove_all_overlays()
-{
-    dtbt -r all
 }
 
 #todo not error, but status_fail
@@ -64,7 +57,7 @@ function check-sysid()
 	    echo "GOOD:  $path expected to not exist and does not exist"
 	else
 	    echo "ERROR: $path expected to not exist and exists"
-	    error=1
+	    status_fail=1
 	fi
 	return
     fi
@@ -74,7 +67,7 @@ function check-sysid()
 	echo "GOOD:  $path == $got"
     else
 	echo "ERROR: $path == $got (expected $expected)"
-	error=1
+	status_fail=1
     fi
 }
 
@@ -122,7 +115,12 @@ function sysfs_cat_test()
 function usage()
 {
     cat <<EOF
-$(basename $0)
+$(basename $0) [--ghrd-release]
+
+Specify --ghrd-release if running test on an unmodified ghrd release.
+
+The A10 PR reference design that can be found on rocketboards at
+https://rocketboards.org/foswiki/Projects/Arria10SoCHardwareReferenceDesignThatDemostratesPartialReconfiguration#A_42Release_Contents_42
 
 EOF
 }
@@ -148,8 +146,10 @@ case "$(get_devkit_type)" in
     * )        echo "Board not supported for test"; exit 1;;
 esac
 
+unmodified=
 while [ -n "$1" ]; do
     case $1 in
+	--ghrd-release ) ghrd=1 ;;
 	* ) usage ; exit 1 ;;
     esac
     shift
@@ -159,9 +159,17 @@ FPGA_MGR_SYSFS=/sys/class/fpga_manager/fpga0
 CONFIGFS=/sys/kernel/config
 OVERLAYS=${CONFIGFS}/device-tree/overlays
 
-GHRD0=socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
-GHRD1=socfpga_arria10_socdk_sdmmc_ghrd_ovl.dtb
-GHRD2=socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dtb
+if [ -n "$ghrd" ]; then
+    DTBO_DIR="-p /boot"
+    STATICREGION=
+    PERSONA0=persona0.dtbo
+    PERSONA1=persona1.dtbo
+else
+    DTBO_DIR=
+    STATICREGION=socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
+    PERSONA0=socfpga_arria10_socdk_sdmmc_ghrd_ovl.dtb
+    PERSONA1=socfpga_arria10_socdk_sdmmc_ghrd_persona_ovl.dtb
+fi
 
 #=======================================================================
 # Start testing
@@ -195,44 +203,55 @@ ls /sys/class/fpga_region/ -l
 echo
 
 sleep 1
-echo "Applying ext cfg overlay : $GHRD0"
-apply_overlay ${GHRD0}
-sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
-echo
+if [ -n "$STATICREGION" ]; then
+    echo "Applying ext cfg overlay : $STATICREGION"
+    apply_overlay ${STATICREGION}
+fi
+    sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
+    echo
 ls /sys/class/fpga_region/ -l
-check-sysid ff200000 3221755904
+check-sysid ff200000 3221756416
 check-sysid ff200800
 check-sysid ff200900
 echo
 
-echo "Applying overlay : $GHRD1"
-apply_overlay ${GHRD1}
+echo "Applying overlay : $PERSONA0"
+apply_overlay ${PERSONA0}
 sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
 echo
 ls /sys/class/fpga_region/ -l
-check-sysid ff200000 3221755904
+check-sysid ff200000 3221756416
 check-sysid ff200800 3405707982
 check-sysid ff200900
 echo
 
-echo "Removing overlay : $GHRD1"
-remove_overlay ${GHRD1}
+echo "Removing overlay : $PERSONA0"
+remove_overlay ${PERSONA0}
 ls /sys/class/fpga_region -l
-check-sysid ff200000 3221755904
+check-sysid ff200000 3221756416
 check-sysid ff200800
 check-sysid ff200900
 echo
 
-echo "Applying overlay : $GHRD2"
-apply_overlay ${GHRD2}
+echo "Applying overlay : $PERSONA1"
+apply_overlay ${PERSONA1}
 sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
 ls /sys/class/fpga_region -l
-check-sysid ff200000 3221755904
+check-sysid ff200000 3221756416
 check-sysid ff200800
 check-sysid ff200900 4207856382
 echo
 
-dtbt -r all
+remove_overlay ${PERSONA1}
+ls /sys/class/fpga_region/ -l
+check-sysid ff200000 3221756416
+check-sysid ff200800
+check-sysid ff200900
+
+if [ -n "$STATICREGION" ]; then
+    echo "Removing ext cfg overlay : $STATICREGION"
+    remove_overlay ${STATICREGION}
+fi
 ls /sys/class/fpga_region/ -l
 check-sysid ff200000
 check-sysid ff200800
@@ -243,6 +262,8 @@ check-sysid ff200900
 #
 
 echo
+uname -a
+echo
 if [ "$status_fail" == 0 ]; then
     echo "PASS"
 else
@@ -250,5 +271,3 @@ else
 fi
 
 exit $status_fail
-
-
