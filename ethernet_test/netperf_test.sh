@@ -1,31 +1,38 @@
 #!/bin/bash
 
-# Start netserver on host with:
-# netserver -p 1234
+# This test runs a series of netperf tests for tracking Ethernet performance
 
-TEST_RESULTS="netperf_test.txt"
+status_fail=0
+
 HOST_ADDR="192.168.1.101"
-SELF="$(basename $0)"
-DIRSELF="$(dirname $0)"
+readonly SELF="$(basename $0)"
+readonly DIRSELF="$(dirname $0)"
 
 usage()
 {
     cat <<EOF
+To run this test, a netserver must be running on the HOST PC as
+the other side of this transaction.
+Start the netwerver on the host PC with:
+# netserver -p 1234
+
+This test will:
 Capture the Kernel Version and ifconfig settings then
 Run the Ethernet tests
-Capture the Ethtool settings.
-Saving everything into a local file for attaching to test page.
+Capture the Ethernet configuration using Ethtool.
+It is useful to capture the output by piping to a tee file.
+${SELF} 2>&1 | tee <output_file>.txt
 
-Usage: $(basename $0) [-h] [-a <host address>]
+Usage: ${SELF} [-h] [-a <host address>]
 
 i.e.:
- $  $(basename $0)
+ $  ${SELF}
   Execute the test with default host address ${HOST_ADDR}
 
- $  $(basename $0) -a 192.168.1.2
+ $  ${SELF} -a 192.168.1.2
   Execute the test with passed in host address 192.168.1.2
 
- $  $(basename $0) -h
+ $  ${SELF} -h
   Print this message.
 
 EOF
@@ -40,55 +47,93 @@ while [ -n "$1" ]; do
     shift
 done
 
-echo "uname -a" | tee ${TEST_RESULTS}
-uname -a | tee -a ${TEST_RESULTS}
-echo  | tee -a ${TEST_RESULTS}
-echo "-------------------------------------------------" | tee -a ${TEST_RESULTS}
+function netperf_test::netperf_results ()
+{
+    CMD="$1"
+    THRESHOLD="$2"
+    #echo "Command: ${CMD}"
+    netperf=$(${CMD})
+    ret=$?
 
-sleep 1
-echo "ifconfig eth0" | tee -a ${TEST_RESULTS}
-ifconfig eth0 | tee -a ${TEST_RESULTS}
-echo  | tee -a ${TEST_RESULTS}
-echo "-------------------------------------------------" | tee -a ${TEST_RESULTS}
+    if [ "${ret}" != '0' ]; then
+	echo "FAIL - return code is ${ret}"
+	status_fail=1
+    fi
 
-sleep 1
-echo "TCP Performance" | tee -a ${TEST_RESULTS}
-echo " => netperf -H ${HOST_ADDR}" | tee -a ${TEST_RESULTS}
-netperf -H ${HOST_ADDR} | tee -a ${TEST_RESULTS}
+    echo "${netperf}"
+    # Throughput is the last field on the 7th line. Use rev to flop, cut, reverse again and trim.
+    throughput=$(echo "${netperf}" | head -7 | tail -1 | rev | cut -c -12 | rev | tr -d '[:space:]')
+    throughput=$(printf "%.0f\n" "${throughput}")
+    echo "^^^^^^^^^^^^^^^^^^"
+    echo "Throughput number is ${throughput}"
+
+    if [ "${throughput}" -lt "${THRESHOLD}" ]; then
+	echo "Error, Didn't meet threshold value of ${THRESHOLD}."
+	status_fail=1
+    else
+	echo "Passed threshold value of ${THRESHOLD}"
+    fi
+}
+
+
+echo "Kernel Version: `uname -a`"
 echo
-echo "-------------------------------------------------" | tee -a ${TEST_RESULTS}
+echo "-------------------------------------------------"
 
 sleep 1
-echo "UDP Stream Performance" | tee -a ${TEST_RESULTS}
-echo " => netperf -H ${HOST_ADDR} -t UDP_STREAM -- -m 1024" | tee -a ${TEST_RESULTS}
-netperf -H ${HOST_ADDR} -t UDP_STREAM -- -m 1024 | tee -a ${TEST_RESULTS}
+set -x; ifconfig eth0; set +x
 echo
-echo "-------------------------------------------------" | tee -a ${TEST_RESULTS}
-
+echo "-------------------------------------------------"
 
 sleep 1
-echo "TCP Request/Response Performance" | tee -a ${TEST_RESULTS}
-echo " => netperf -H ${HOST_ADDR} -t TCP_RR" | tee -a ${TEST_RESULTS}
-netperf -H ${HOST_ADDR} -t TCP_RR | tee -a ${TEST_RESULTS}
+echo "TCP Performance"
+NP_CMD="netperf -H ${HOST_ADDR}"
+echo " => ${NP_CMD}"
+# Send netperf_results command with COMMAND and minimum threshold value
+netperf_test::netperf_results "${NP_CMD}" 750
 echo
-echo "-------------------------------------------------" | tee -a ${TEST_RESULTS}
+echo "-------------------------------------------------"
 
 sleep 1
-echo "UDP Request/Response Performance" | tee -a ${TEST_RESULTS}
-echo " => netperf -H ${HOST_ADDR} -t UDP_RR" | tee -a ${TEST_RESULTS}
-netperf -H ${HOST_ADDR} -t UDP_RR | tee -a ${TEST_RESULTS}
+echo "UDP Stream Performance"
+NP_CMD="netperf -H ${HOST_ADDR} -t UDP_STREAM -- -m 1024"
+echo " => ${NP_CMD}"
+# Send netperf_results command with COMMAND and minimum threshold value
+netperf_test::netperf_results "${NP_CMD}" 500
+echo
+echo "-------------------------------------------------"
+
+sleep 1
+NP_CMD="netperf -H ${HOST_ADDR} -t TCP_RR"
+echo " => ${NP_CMD}"
+# Send netperf_results command with COMMAND and minimum threshold value
+netperf_test::netperf_results "${NP_CMD}" 1200
+echo
+echo "-------------------------------------------------"
+
+sleep 1
+NP_CMD="netperf -H ${HOST_ADDR} -t UDP_RR"
+echo " => ${NP_CMD}"
+# Send netperf_results command with COMMAND and minimum threshold value
+netperf_test::netperf_results "${NP_CMD}" 1200
 echo
 echo "-------------------------------------------------"
 
 sleep 3
-echo "Dump Ethernet Stats" | tee -a ${TEST_RESULTS}
-echo "ethtool -S eth0" | tee -a ${TEST_RESULTS}
-ethtool -S eth0 | tee -a ${TEST_RESULTS}
+echo "Dump Ethernet Stats"
+set -x; ethtool -S eth0; set +x;
 echo "-------------------------------------------------"
 
 sleep 3
-echo "Dump Ethernet Registers" | tee -a ${TEST_RESULTS}
-echo "ethtool -d eth0" | tee -a ${TEST_RESULTS}
-ethtool -d eth0 | tee -a ${TEST_RESULTS}
+echo "Dump Ethernet Registers"
+set -x; ethtool -d eth0; set +x;
 echo "-------------------------------------------------"
 
+echo
+if [ "${status_fail}" == 0 ]; then
+    echo "PASS"
+else
+    echo "FAIL due to failures already listed above"
+fi
+
+exit ${status_fail}
