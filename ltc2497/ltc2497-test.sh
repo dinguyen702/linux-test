@@ -13,7 +13,13 @@ print_voltage()
 	echo "not found: $1"
 	status_fail=1
     else
-	printf "%s %s\n" "${1}" "$(cat ${1})"
+	voltage=$(cat ${1})
+	if [ $? -ne 0 ]; then
+	    echo "Error reading voltage ($1)"
+	    status_fail=1
+	else
+	    printf "%s %s\n" "${1}" "$voltage"
+	fi
     fi
 }
 
