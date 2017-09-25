@@ -109,7 +109,7 @@ done
 
 sysfs_test date "$(date +'%Y-%m-%d')"
 sysfs_test time "$(date +'%T')"
-sysfs_test name ds1339
+#sysfs_test name ds1339
 sysfs_test hctosys ANYTHING
 sysfs_test max_user_freq ANYTHING
 sysfs_test since_epoch ANYTHING
