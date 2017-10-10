@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 kver="$(uname -r | cut -c1-4)"
 
@@ -13,6 +13,7 @@ case $kver in
     * )
     CYCONE5_BUTTONS="451 450 449 448"
     ARRIA5_BUTTONS="468 467 466 460"
+    STRATIX10_BUTTONS="492 493"
     ;;
 esac
 
@@ -33,6 +34,10 @@ EOF
 
 setedge()
 {
+    # Some boards have < 4 buttons
+    if [ -z "$2" ]; then
+	return
+    fi
     echo $1 > /sys/class/gpio/gpio${2}/edge
     if [ "$1" != "$(cat /sys/class/gpio/gpio${2}/edge)" ]; then
         echo "FAIL could not set gpio interrupt edge $1 for gpio $2"
@@ -42,6 +47,13 @@ setedge()
 
 get_devkit_type()
 {
+    # SoCFPGA Stratix 10 SoCDK
+    grep -sq 'Stratix 10 SoCDK' /proc/device-tree/model
+    if [ $? -eq 0 ]; then
+	echo 'Stratix10'
+	return
+    fi
+    
     # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
     # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
     cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
@@ -70,6 +82,7 @@ done
 case "$(get_devkit_type)" in
     ArriaV ) BUTTON_GPIOS="$ARRIA5_BUTTONS" ;;
     CycloneV ) BUTTON_GPIOS="$CYCONE5_BUTTONS" ;;
+    Stratix10 ) BUTTON_GPIOS="$STRATIX10_BUTTONS" ;;
     * ) echo "unable to identify board. exiting." ; exit 1 ;;
 esac
 
