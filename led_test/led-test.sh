@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 SLEEP_TIME=1
 SYS_LEDS=/sys/class/leds/
