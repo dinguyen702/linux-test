@@ -1,22 +1,5 @@
 #!/bin/sh
 
-kver="$(uname -r | cut -c1-4)"
-
-case $kver in
-    3.10|3.11|3.12|3.13|3.14|3.15|3.16|3.17 )
-    CYCONE5_BUTTONS="195 194 193 192"
-    ARRIA5_BUTTONS="212 211 210 204"
-    ;;
-
-    # 3.18 has commit "gpio: Increase ARCH_NR_GPIOs to 512"
-    # commit 7ca267faba8ad097f57cb71c32ae1865de83241a
-    * )
-    CYCONE5_BUTTONS="451 450 449 448"
-    ARRIA5_BUTTONS="468 467 466 460"
-    STRATIX10_BUTTONS="492 493"
-    ;;
-esac
-
 usage()
 {
     cat <<EOF
@@ -79,12 +62,49 @@ while [ -n "$1" ]; do
     shift
 done
 
-case "$(get_devkit_type)" in
+devkit="$(get_devkit_type)"
+
+# Assuming max of 512 gpios.  These numbers are adjusted below.
+CYCONE5_BUTTONS="451 450 449 448"
+ARRIA5_BUTTONS="468 467 466 460"
+STRATIX10_BUTTONS="492 493"
+
+case "${devkit}" in
     ArriaV ) BUTTON_GPIOS="$ARRIA5_BUTTONS" ;;
     CycloneV ) BUTTON_GPIOS="$CYCONE5_BUTTONS" ;;
     Stratix10 ) BUTTON_GPIOS="$STRATIX10_BUTTONS" ;;
-    * ) echo "unable to identify board. exiting." ; exit 1 ;;
+    Arria10 ) echo "$devkit not supported for this test (no buttons)"; exit 1;;
+    * ) echo "unable to identify board ($devkit). exiting." ; exit 1 ;;
 esac
+
+# For the oldest branches gpios are numbered starting at (256 - ngpio)
+# 3.18 has commit "gpio: Increase ARCH_NR_GPIOs to 512", so (512 - ngpio)
+# 4.13 ==> (2048 - ngpio)
+cd /sys/class/gpio
+top_gpiochip="$(ls -d -1 gpiochip* | tail -1 | sed 's/gpiochip//')"
+gpio_offset=0
+if [ -z "$top_gpiochip" ]; then
+    echo "Error - could not find /sys/class/gpio/gpiochip*"
+    exit 1
+elif [ $top_gpiochip -lt 256 ]; then
+    # Assuming max of 256 gpios, subtract 256 from gpio numbers
+    gpio_offset=-256
+elif [ $top_gpiochip -gt 1024 ]; then
+    # Assuming max of 2048 gpios, add (2048 - 512)
+    gpio_offset=1536
+fi
+
+temp_gpios="$BUTTON_GPIOS"
+BUTTON_GPIOS=
+for foo in $temp_gpios; do
+    let gpio=foo+gpio_offset
+    if [ -z "$BUTTON_GPIOS" ]; then
+	BUTTON_GPIOS=$gpio
+    else
+	BUTTON_GPIOS="$BUTTON_GPIOS $gpio"
+    fi
+done
+echo "$BUTTON_GPIOS"
 
 for foo in $BUTTON_GPIOS; do
     export_gpio $foo
