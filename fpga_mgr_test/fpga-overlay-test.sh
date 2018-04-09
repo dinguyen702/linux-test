@@ -166,6 +166,9 @@ OVERLAYS=${CONFIGFS}/device-tree/overlays
 #
 
 # Set up some file under /lib/firmware
+if [ ! -e /lib/firmware ]; then
+    bash_cmd 'mkdir /lib/firmware'
+fi
 bash_cmd 'cp *.dtb.o /lib/firmware'
 bash_cmd "cp $RBF_NAME /lib/firmware"
 bash_cmd 'cd /lib/firmware'
