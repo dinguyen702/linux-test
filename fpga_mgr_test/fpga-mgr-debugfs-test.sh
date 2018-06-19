@@ -113,7 +113,7 @@ case "$(get_devkit_type)" in
 #    ArriaV )   RAW_IMAGE=ghrd_5asxfb5h4.rbf.gz
 #               MGR_NAME='Altera FPGA Manager'
 #	       ;;
-    CycloneV ) image=soc_system.rbf
+    CycloneV ) image=soc_system-fpga-mgr-test-c5-1.rbf
                MGR_NAME='Altera FPGA Manager'
 	       ;;
 #    Arria10 )  image=
@@ -143,7 +143,6 @@ path_test /sys/kernel/debug/fpga_manager/${fpga_dev}/image
 path_test /sys/kernel/debug/fpga_manager/${fpga_dev}/flags
 path_test /sys/kernel/debug/fpga_manager/${fpga_dev}/firmware_name
 
-image=soc_system.rbf
 blksize=10M
 
 read_image
