@@ -11,6 +11,7 @@ declare -a MEMORY_ECC_PERIPHERALS=()
 
 declare -ar CA5_MEMORY_ECC_PERIPHS=("ddr" "l2" "ocram")
 declare -ar A10_MEMORY_ECC_PERIPHS=("ddr" "l2" "ocram")
+declare -ar S10_MEMORY_ECC_PERIPHS=("ddr")
 
 # ------------ FIFO ECCs ------------------------------
 declare -a FIFO_ECC_PERIPHERALS=()
@@ -27,7 +28,8 @@ function get_devkit_type()
 	# Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
 	# Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
 	# Altera SOCFPGA Arria 10 ==> Arria10
-	cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
+	# SoCFPGA Stratix 10 SoCDK ==> Stratix10
+	cat /proc/device-tree/model | sed 's/Altera //' | cut -d ' ' -f 2-3 | tr -d ' '
 }
 
 # See if an element is contained in the array (0 if yes(SUCCESS), 1 if no)
@@ -133,6 +135,7 @@ SOC="$(get_devkit_type)"
 case ${SOC} in
 	ArriaV|CycloneV) MEMORY_ECC_PERIPHERALS=( "${CA5_MEMORY_ECC_PERIPHS[@]}" ) ;;
 	Arria10) MEMORY_ECC_PERIPHERALS=( "${A10_MEMORY_ECC_PERIPHS[@]}" ) ;;
+	Stratix10) MEMORY_ECC_PERIPHERALS=( "${S10_MEMORY_ECC_PERIPHS[@]}" ) ;;
 	*) echo "Unsupported SoC (${SOC})"; exit 1 ;;
 esac
 
@@ -143,10 +146,11 @@ do
 	echo "---------------------------------------------------------"
 done
 echo
+echo "Running the Peripheral FIFO ECC Tests"
 
 #----------------- Peripheral FIFO Tests ----------------------------
 case ${SOC} in
-	ArriaV|CycloneV) true ;;
+	ArriaV|CycloneV|Stratix10) true ;;
 	# Only Arria10 supports FIFO ECCs right now.
 	Arria10) FIFO_ECC_PERIPHERALS=( "${A10_FIFO_ECC_PERIPHS[@]}" ) ;;
 	*) echo "Unsupported SoC (${SOC})"; exit 1 ;;
