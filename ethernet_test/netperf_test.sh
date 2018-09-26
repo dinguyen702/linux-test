@@ -62,7 +62,7 @@ function netperf_test::netperf_results ()
 
     echo "${netperf}"
     # Throughput is the last field on the 7th line. Use rev to flop, cut, reverse again and trim.
-    throughput=$(echo "${netperf}" | head -7 | tail -1 | rev | cut -c -12 | rev | tr -d '[:space:]')
+    throughput=$(echo "${netperf}" | head -n7 | tail -1 | rev | cut -c -12 | rev | tr -d '[:space:]')
     throughput=$(printf "%.0f\n" "${throughput}")
     echo "^^^^^^^^^^^^^^^^^^"
     echo "Throughput number is ${throughput}"
