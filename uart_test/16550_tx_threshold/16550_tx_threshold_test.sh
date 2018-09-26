@@ -65,11 +65,20 @@ while [ -n "$1" ]; do
     shift
 done
 
+# Test for an empty TTY
+if [ -z ${TTY} ]; then echo "Missing arg"; usage; exit; fi
+
 # Ensure the port is valid.
 if [ ! -c "/dev/${TTY}" ]; then
 	echo "Error! UART selection not found [/dev/${TTY}]"; echo; usage; exit;
 fi
 
+# Check the compatibility string.
+if [ "$( cat /sys/class/tty/${TTY}/device/of_node/compatible | grep "altr,16550-FIFO32" | wc -l )" -eq "0" ]; then
+	echo "Error! UART compatible string doesn't match [/dev/${TTY}]"; echo; usage; exit;
+fi
+
+# Check if there is a tx-threshold property
 if [ "$( ls /sys/class/tty/${TTY}/device/of_node/ | grep "tx-threshold" | wc -l )" -eq "0" ]; then
 	echo "Error! UART doesn't have programmable TX Threshold [/dev/${TTY}]"; echo; usage; exit;
 fi
