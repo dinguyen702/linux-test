@@ -8,7 +8,7 @@ rm modules.tar
 wget $BASE_URL/modules.tar
 tar xf modules.tar
 
-dmesg -c
+dmesg -C
 dmesg -n 3
 
 modprobe pl330
@@ -19,6 +19,10 @@ echo 10 >/sys/module/dmatest/parameters/iterations
 echo Y >/sys/module/dmatest/parameters/run
 
 sleep 5
+
+dmesg
+
+echo "-----------------------------------------------------------"
 
 # success_count=`grep -c "dma0chan[0-7].*0 failures" /var/log/messages`
 success_count=`dmesg|grep -c "dma0chan[0-7].*0 failures"`
