@@ -1,5 +1,13 @@
 Sysid test
 
+12/13/2018 = stratix10 support
+
+Support files are in the stratix10 subdirectory...
+* The jic.gz file has to be gunzipped and updated into the board's qspi using Quartus Programmer.
+* The patch to add the dts's has to be applied to the kernel (and built).
+* The persona*.rbf.gz's need to be gunzipped and added to board rootfs's /lib/firmware directory
+When booting the board, run 'bridge enable' in u-boot before kernel boots
+
 7/18/2017
 
 This test is based on the A10 PR reference design which can be found on RocketBoards at:

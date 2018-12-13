@@ -7,6 +7,7 @@ function get_devkit_type()
     # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
     # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
     # Altera SOCFPGA Arria 10 ==> Arria10
+    # 10SoCDK
     cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
 }
 
@@ -42,7 +43,11 @@ function remove_overlay()
 
 function check-sysid()
 {
-    addr=$1
+    addr=${sysid_addrs[$1]}
+    if [ ${addr} -eq 0 ]; then
+	echo "skipping base sysid (nonexistant)"
+	return
+    fi
     expected=$2
     path=/sys/bus/platform/drivers/altera_sysid/${addr}.sysid
 
@@ -123,62 +128,70 @@ function sysid_test()
     if [ -n "$STATICREGION" ]; then
 	apply_overlay ${STATICREGION}
     fi
-    sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
     echo
     ls /sys/class/fpga_region/ -l
-    check-sysid ff200000 3221756416
-    check-sysid ff200800
-    check-sysid ff200900
+    check-sysid 0 3221756416
+    check-sysid 1
+    check-sysid 2
     echo
 
     apply_overlay ${PERSONA0}
     sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
     echo
     ls /sys/class/fpga_region/ -l
-    check-sysid ff200000 3221756416
-    check-sysid ff200800 3405707982
-    check-sysid ff200900
+    check-sysid 0 3221756416
+    check-sysid 1 3405707982
+    check-sysid 2
     echo
 
     remove_overlay ${PERSONA0}
     ls /sys/class/fpga_region -l
-    check-sysid ff200000 3221756416
-    check-sysid ff200800
-    check-sysid ff200900
+    check-sysid 0 3221756416
+    check-sysid 1
+    check-sysid 2
     echo
 
     apply_overlay ${PERSONA1}
     sysfs_cat_test $FPGA_MGR_SYSFS/state 'operating'
     ls /sys/class/fpga_region -l
-    check-sysid ff200000 3221756416
-    check-sysid ff200800
-    check-sysid ff200900 4207856382
+    check-sysid 0 3221756416
+    check-sysid 1
+    check-sysid 2 4207856382
     echo
 
     remove_overlay ${PERSONA1}
     ls /sys/class/fpga_region/ -l
-    check-sysid ff200000 3221756416
-    check-sysid ff200800
-    check-sysid ff200900
+    check-sysid 0 3221756416
+    check-sysid 1
+    check-sysid 2
 
     if [ -n "$STATICREGION" ]; then
 	remove_overlay ${STATICREGION}
     fi
     ls /sys/class/fpga_region/ -l
-    check-sysid ff200000
-    check-sysid ff200800
-    check-sysid ff200900
+    check-sysid 0
+    check-sysid 1
+    check-sysid 2
 }
 
 #===========================================================
 # Set up constants for the test
 #
 
-echo "Sysid test on Arria 10"
+echo "Sysid test"
 echo
 
 case "$(get_devkit_type)" in
-    Arria10 )  ;;
+    Arria10 )
+	sysid_addrs=(ff200000 ff200800 ff200900)
+	sysid_values=(3221756416 3405707982 4207856382)
+	STATICREGION=socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
+	;;
+    10SoCDK )
+	sysid_addrs=(0 f9000800 f9000900)
+	sysid_values=(0 3405707982 4207856382)
+	STATICREGION=base.dtb
+	;;
     * )        echo "Board not supported for test"; exit 1;;
 esac
 
@@ -204,7 +217,6 @@ if [ -n "$ghrd" ]; then
     PERSONA1=persona1.dtbo
 else
     DTBO_DIR=
-    STATICREGION=socfpga_arria10_socdk_sdmmc_ghrd_ovl_ext_cfg.dtb
     PERSONA0=persona0.dtb
     PERSONA1=persona1.dtb
 fi
