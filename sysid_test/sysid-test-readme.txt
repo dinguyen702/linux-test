@@ -1,13 +1,25 @@
 Sysid test
 
+======================================================================================================================
 12/13/2018 = stratix10 support
 
 Support files are in the stratix10 subdirectory...
-* The jic.gz file has to be gunzipped and updated into the board's qspi using Quartus Programmer.
-* The patch to add the dts's has to be applied to the kernel (and built).
-* The persona*.rbf.gz's need to be gunzipped and added to board rootfs's /lib/firmware directory
-When booting the board, run 'bridge enable' in u-boot before kernel boots
 
+Set up for testing
+* Apply the linux-infra/sysid-test/stratix10/0001-arm64-dts-add-test-overlays-for-S10-PR-test.patch to the kernel.
+* Rebuild the kernel, copying these three dtb files to your rootfs /lib/firmware:
+  * base.dtb
+  * persona0.dtb
+  * persona1.dtb
+* gunzip the linux-infra/sysid-test/stratix10/persona*.rbf.gz files.
+  * Copy the resulting persona*.rbf’s to your rootfs /lib/firmware.
+* gunzip the linux-infra/sysid-test/stratix10/s10_18p1_222_hps_pr.jic.gz file
+  * Use the resulting s10_18p1_222_hps_pr.jic to update the board's qspi using Quartus Programmer.
+
+**** When booting the board, run 'bridge enable' in u-boot before kernel boots ****
+* Run the script on the board: sysid-test.sh
+
+======================================================================================================================
 7/18/2017
 
 This test is based on the A10 PR reference design which can be found on RocketBoards at:
