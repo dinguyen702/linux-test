@@ -19,6 +19,17 @@ Set up for testing
 **** When booting the board, run 'bridge enable' in u-boot before kernel boots ****
 * Run the script on the board: sysid-test.sh
 
+Debugging: If the test fails then ask yourself the following:
+* Does your rootfs have bash in it? (Error message will say it can't find sysid-test.sh)
+* Is the freeze controller driver enabled and built?
+* Is the freeze controller driver module copied to your rootfs?
+* Is the sysid driver enabled and built?
+* Is the sysid driver module copied to your rootfs?
+* When persona0.dtb is loaded, do you see things under /sys/class/fpga*
+  * fpga manager
+  * freeze driver
+  * fpga regions
+
 ======================================================================================================================
 7/18/2017
 
