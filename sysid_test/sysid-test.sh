@@ -44,7 +44,7 @@ function remove_overlay()
 function check-sysid()
 {
     addr=${sysid_addrs[$1]}
-    if [ ${addr} -eq 0 ]; then
+    if [ "${addr}" == 0 ]; then
 	echo "skipping base sysid (nonexistant)"
 	return
     fi
