@@ -28,7 +28,7 @@ smp_test()
    echo "CPU0: $cpu0_info"
    if [ "$cpu0_info" -ne "$CPU0_INFO" ]; then
 	echo "Failed to see CPU0. Expecting $CPU0_INFO"
-	status_fail=1
+	exit 1
 	return
    fi
 
@@ -38,7 +38,7 @@ smp_test()
    echo "CPU1: $cpu1_info"
    if [ -z "$cpu1_info" ]; then
 	echo "Failed to see CPU1. Expecting $CPU1_INFO"
-	status_fail=1
+	exit 1
 	return
    fi
 }
