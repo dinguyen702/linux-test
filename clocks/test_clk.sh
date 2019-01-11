@@ -49,18 +49,10 @@ esac
    fi
 
    echo "Read frequency of $MPU_CLK"
-   if [ "$kernel_version" -lt "$KERNEL_3_17" ]; then
-	if [ "$machine_type" == 'Arria10' ]; then
-		CMD="cat /sys/kernel/debug/clk/$OSC_CLK/$MAINPLL_CLK/$MPU_A10_CLK/clk_rate"
-	else
-	        CMD="cat /sys/kernel/debug/clk/$OSC_CLK/$MAINPLL_CLK/$MPU_CLK/clk_rate"
-	fi
+   if [ "$machine_type" == 'Arria10' ]; then
+	CMD="cat /sys/kernel/debug/clk/$MPU_A10_CLK/clk_rate"
    else
-	if [ "$machine_type" == 'Arria10' ]; then
-		CMD="cat /sys/kernel/debug/clk/$MPU_A10_CLK/clk_rate"
-	else
-	        CMD="cat /sys/kernel/debug/clk/$MPU_CLK/clk_rate"
-	fi
+	CMD="cat /sys/kernel/debug/clk/$MPU_CLK/clk_rate"
    fi
    echo "$CMD"
    clk_rate=$($CMD)
@@ -85,8 +77,6 @@ MPU_CLK=mpuclk
 MPU_A10_CLK=mpu_free_clk
 DEVNODE=/sys/kernel/debug/clk
 status_fail=0
-
-KERNEL_3_17=17
 
 OSC_RATE=25000000
 MPU_RATE_CYCLONE5=925000000
