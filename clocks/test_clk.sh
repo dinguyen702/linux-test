@@ -4,6 +4,7 @@ get_devkit_type()
 {
     # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
     # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
+    # SoCFPGA Stratix 10 SoCDK ==> 10SoCDK
     cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
 }
 
@@ -18,6 +19,7 @@ case "$(get_devkit_type)" in
     ArriaV ) mpu_clk=$MPU_RATE_ARRIA5 ;;
     CycloneV ) mpu_clk=$MPU_RATE_CYCLONE5 ;;
     Arria10) mpu_clk=$MPU_RATE_ARRIA10 ;;
+    10SoCDK) mpu_clk=$MPU_RATE_STRATIX10 ;;
     * ) echo "unable to identify board. exiting." ; exit 1 ;;
 esac
    machine_type="$(get_devkit_type)"
@@ -51,6 +53,8 @@ esac
    echo "Read frequency of $MPU_CLK"
    if [ "$machine_type" == 'Arria10' ]; then
 	CMD="cat /sys/kernel/debug/clk/$MPU_A10_CLK/clk_rate"
+   elif [ "$machine_type" == '10SoCDK' ]; then
+	CMD="cat /sys/kernel/debug/clk/$MPU_S10_CLK/clk_rate"
    else
 	CMD="cat /sys/kernel/debug/clk/$MPU_CLK/clk_rate"
    fi
@@ -75,6 +79,7 @@ OSC_CLK=osc1
 MAINPLL_CLK=main_pll
 MPU_CLK=mpuclk
 MPU_A10_CLK=mpu_free_clk
+MPU_S10_CLK=mpu_clk
 DEVNODE=/sys/kernel/debug/clk
 status_fail=0
 
@@ -82,6 +87,7 @@ OSC_RATE=25000000
 MPU_RATE_CYCLONE5=925000000
 MPU_RATE_ARRIA5=1050000000
 MPU_RATE_ARRIA10=1200000000
+MPU_RATE_STRATIX10=1000000000
 
 #===========================================================
 echo "Clock driver test"
