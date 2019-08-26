@@ -11,12 +11,16 @@ declare -a MEMORY_ECC_PERIPHERALS=()
 
 declare -ar CA5_MEMORY_ECC_PERIPHS=("ddr" "l2" "ocram")
 declare -ar A10_MEMORY_ECC_PERIPHS=("ddr" "l2" "ocram")
-declare -ar S10_MEMORY_ECC_PERIPHS=("ddr")
+declare -ar S10_MEMORY_ECC_PERIPHS=("ddr" "ocram")
 
 # ------------ FIFO ECCs ------------------------------
 declare -a FIFO_ECC_PERIPHERALS=()
 
 declare -ar A10_FIFO_ECC_PERIPHS=("usb0" "usb1" "qspi" "nand" "dma" "emac0-rx" \
+				 "emac0-tx" "emac1-rx" "emac1-tx" "emac2-rx" \
+				 "emac2-tx" "sdmmca" "sdmmcb")
+
+declare -ar S10_FIFO_ECC_PERIPHS=("usb0" "usb1" "qspi" "nand" "dma" "emac0-rx" \
 				 "emac0-tx" "emac1-rx" "emac1-tx" "emac2-rx" \
 				 "emac2-tx" "sdmmca" "sdmmcb")
 
@@ -91,6 +95,7 @@ function ecc_test::inject_and_check_errors() {
 			echo 'U' > ${err_inject_path}
 		fi
 
+		sleep 1
 		local end_cerrs="$(cat ${err_status_path}/ce_count)"
 		local end_uerrs="$(cat ${err_status_path}/ue_count)"
 
@@ -150,16 +155,20 @@ echo "Running the Peripheral FIFO ECC Tests"
 
 #----------------- Peripheral FIFO Tests ----------------------------
 case ${SOC} in
-	ArriaV|CycloneV|Stratix10) true ;;
+	ArriaV|CycloneV) true ;;
 	# Only Arria10 supports FIFO ECCs right now.
 	Arria10) FIFO_ECC_PERIPHERALS=( "${A10_FIFO_ECC_PERIPHS[@]}" ) ;;
+	Stratix10) FIFO_ECC_PERIPHERALS=( "${S10_FIFO_ECC_PERIPHS[@]}" ) ;;
 	*) echo "Unsupported SoC (${SOC})"; exit 1 ;;
 esac
 
 # Cycle through all the different FIFO peripherals.
 for ecc_arg in "${FIFO_ECC_PERIPHERALS[@]}"
 do
-	ecc_test::inject_and_check_errors ${ecc_arg} 0
+	case ${SOC} in
+		Arria10) ecc_test::inject_and_check_errors ${ecc_arg} 0 ;;
+		Stratix10) ecc_test::inject_and_check_errors ${ecc_arg} 1 ;;
+	esac
 	echo "---------------------------------------------------------"
 done
 echo
