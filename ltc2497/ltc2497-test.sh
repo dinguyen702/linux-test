@@ -6,6 +6,8 @@ function get_devkit_type()
     # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
     # Altera SOCFPGA Arria 10 ==> Arria10
     # SoCFPGA Stratix 10 SoCDK ==> Stratix10
+    # SoCFPGA Agilex SoCDK ==> Agilex SoCDK
+
     cat /proc/device-tree/model | sed 's/Altera //' | cut -d ' ' -f 2-3 | tr -d ' '
 }
 
@@ -89,6 +91,10 @@ case ${SOC} in
 	run_ltc_test $i2c_path 0-0016 1
 	;;
     Stratix10)
+	i2c_path=/sys/devices/platform/soc/ffc02900.i2c/i2c-0
+	run_ltc_test $i2c_path 0-0014 0
+	;;
+    AgilexSoCDK)
 	i2c_path=/sys/devices/platform/soc/ffc02900.i2c/i2c-0
 	run_ltc_test $i2c_path 0-0014 0
 	;;
