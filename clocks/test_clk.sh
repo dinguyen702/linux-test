@@ -11,7 +11,7 @@ get_devkit_type()
 
 get_kernel_version()
 {
-   uname -r | cut -c -4 | cut -c 3-5
+   uname -r | cut -c -4 | cut -c 1-3
 }
 
 clock_test()
