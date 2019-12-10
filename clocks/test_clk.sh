@@ -5,7 +5,8 @@ get_devkit_type()
     # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
     # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
     # SoCFPGA Stratix 10 SoCDK ==> 10SoCDK
-    cat /proc/device-tree/model | cut -d ' ' -f 3-4 | tr -d ' '
+    # SoCFPGA Agilex SoCDK ==> Agilex SoCDK
+    cat /proc/device-tree/model | sed 's/Altera //' | cut -d ' ' -f 2-3 | tr -d ' '
 }
 
 get_kernel_version()
@@ -20,6 +21,7 @@ case "$(get_devkit_type)" in
     CycloneV ) mpu_clk=$MPU_RATE_CYCLONE5 ;;
     Arria10) mpu_clk=$MPU_RATE_ARRIA10 ;;
     10SoCDK) mpu_clk=$MPU_RATE_STRATIX10 ;;
+    AgilexSoCDK) mpu_clk=$MPU_RATE_AGILEX ;;
     * ) echo "unable to identify board. exiting." ; exit 1 ;;
 esac
    machine_type="$(get_devkit_type)"
@@ -55,6 +57,8 @@ esac
 	CMD="cat /sys/kernel/debug/clk/$MPU_A10_CLK/clk_rate"
    elif [ "$machine_type" == '10SoCDK' ]; then
 	CMD="cat /sys/kernel/debug/clk/$MPU_S10_CLK/clk_rate"
+   elif [ "$machine_type" == 'AgilexSoCDK' ]; then
+	CMD="cat /sys/kernel/debug/clk/$MPU_S10_CLK/clk_rate"
    else
 	CMD="cat /sys/kernel/debug/clk/$MPU_CLK/clk_rate"
    fi
@@ -88,6 +92,7 @@ MPU_RATE_CYCLONE5=925000000
 MPU_RATE_ARRIA5=1050000000
 MPU_RATE_ARRIA10=1200000000
 MPU_RATE_STRATIX10=1000000000
+MPU_RATE_AGILEX=1000000000
 
 #===========================================================
 echo "Clock driver test"
