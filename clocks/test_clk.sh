@@ -20,7 +20,7 @@ case "$(get_devkit_type)" in
     ArriaV ) mpu_clk=$MPU_RATE_ARRIA5 ;;
     CycloneV ) mpu_clk=$MPU_RATE_CYCLONE5 ;;
     Arria10) mpu_clk=$MPU_RATE_ARRIA10 ;;
-    10SoCDK) mpu_clk=$MPU_RATE_STRATIX10 ;;
+    Stratix10) mpu_clk=$MPU_RATE_STRATIX10 ;;
     AgilexSoCDK) mpu_clk=$MPU_RATE_AGILEX ;;
     * ) echo "unable to identify board. exiting." ; exit 1 ;;
 esac
@@ -55,7 +55,7 @@ esac
    echo "Read frequency of $MPU_CLK"
    if [ "$machine_type" == 'Arria10' ]; then
 	CMD="cat /sys/kernel/debug/clk/$MPU_A10_CLK/clk_rate"
-   elif [ "$machine_type" == '10SoCDK' ]; then
+   elif [ "$machine_type" == 'Stratix10' ]; then
 	CMD="cat /sys/kernel/debug/clk/$MPU_S10_CLK/clk_rate"
    elif [ "$machine_type" == 'AgilexSoCDK' ]; then
 	CMD="cat /sys/kernel/debug/clk/$MPU_S10_CLK/clk_rate"
