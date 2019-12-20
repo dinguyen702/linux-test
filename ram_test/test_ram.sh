@@ -16,14 +16,14 @@ ram_test()
    local err=0
 case "$(get_devkit_type)" in
     Stratix10) ramsize=$STRATIX_DEVKIT ;;
-    Stratix20) ramsize=$STRATIX_DEVKIT ;;
+    AgilexSoCDK) ramsize=$STRATIX_DEVKIT ;;
     * ) echo "unable to identify board(test applicable to arm64 only). exiting." ; exit 1 ;;
 esac
    machine_type="$(get_devkit_type)"
    echo "machine_type = $machine_type"
    echo "RAM size = $DEVKIT_RAM_SIZE"
 
-   if [ "$machine_type" == 'Stratix10' ] || [ "$machine_type" == 'Stratix20' ]; then
+   if [ "$machine_type" == 'Stratix10' ] || [ "$machine_type" == 'AgilexSoCDK' ]; then
         if [ "$DEVKIT_RAM_SIZE" -lt "$ramsize" ]; then
              echo "RAM SIZE is less than 2GB"
              err=1
