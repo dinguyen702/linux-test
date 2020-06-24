@@ -63,12 +63,17 @@ function ecc_test::inject_and_check_errors() {
 	# DDR is special and has a memory controller designation.
 	if [ "${ecc_name}" == "ddr" ]; then
 		ecc_dir="mc"
+		temp_dir="${ECC_STATUS_PATH_TOP}/sdramedac"
+		# After 5.6, the path changed.
+		if [ -d "${temp_dir}" ]; then
+			ecc_dir="sdramedac"
+		fi
 	fi
 	local err_status_path_root="${ECC_STATUS_PATH_TOP}/${ecc_dir}"
 	local ecc_instance="${3:-0}"
 	local err_status_path="${err_status_path_root}/${ecc_dir}${ecc_instance}"
 	# DDR is special and has a memory controller designation with instance.
-	if [ "${ecc_name}" == "ddr" ]; then
+	if [ "${ecc_name}" == "ddr" ] && [ "${ecc_dir}" == "mc" ]; then
 		ecc_dir="mc0"
 	fi
 	local err_inject_path="/sys/kernel/debug/edac/${ecc_dir}/altr_trigger"
