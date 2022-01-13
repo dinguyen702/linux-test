@@ -12,6 +12,7 @@ declare -a MEMORY_ECC_PERIPHERALS=()
 declare -ar CA5_MEMORY_ECC_PERIPHS=("ddr" "l2" "ocram")
 declare -ar A10_MEMORY_ECC_PERIPHS=("ddr" "l2" "ocram")
 declare -ar S10_MEMORY_ECC_PERIPHS=("ddr" "ocram")
+declare -ar AGILEX_MEMORY_ECC_PERIPHS=("ddr" "ocram")
 
 # ------------ FIFO ECCs ------------------------------
 declare -a FIFO_ECC_PERIPHERALS=()
@@ -146,6 +147,7 @@ case ${SOC} in
 	ArriaV|CycloneV) MEMORY_ECC_PERIPHERALS=( "${CA5_MEMORY_ECC_PERIPHS[@]}" ) ;;
 	Arria10) MEMORY_ECC_PERIPHERALS=( "${A10_MEMORY_ECC_PERIPHS[@]}" ) ;;
 	Stratix10) MEMORY_ECC_PERIPHERALS=( "${S10_MEMORY_ECC_PERIPHS[@]}" ) ;;
+	Agilex) MEMORY_ECC_PERIPHERALS=( "${AGILEX_MEMORY_ECC_PERIPHS[@]}" ) ;;
 	*) echo "Unsupported SoC (${SOC})"; exit 1 ;;
 esac
 
