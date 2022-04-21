@@ -1,5 +1,14 @@
 #!/bin/bash
 
+get_devkit_type()
+{
+    # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
+    # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
+    # SoCFPGA Stratix 10 SoCDK ==> 10SoCDK
+    # SoCFPGA Agilex SoCDK ==> Agilex SoCDK
+    cat /proc/device-tree/model | sed 's/Altera //' | cut -d ' ' -f 2-3 | tr -d ' '
+}
+
 get_l2aux_ctrl()
 {
    dmesg | grep CACHE_ID | cut -d':' -f2 | cut -d' ' -f5
@@ -7,6 +16,14 @@ get_l2aux_ctrl()
 
 l2cache_test()
 {
+   machine_type="$(get_devkit_type)"
+   echo "machine_type = $machine_type"
+
+   if [ "$machine_type" == 'Stratix10' ] || [ "$machine_type" == 'AgilexSoCDK' ]; then
+	echo "L2 Cache test is not applicable for Stratix10/Agilex"
+	exit 1
+   fi
+
    l2_cache_dmesg="$(dmesg | grep CACHE_ID | sed -r 's,\[[ 0-9.]*\] ,,')"
    echo "$l2_cache_dmesg"
 
