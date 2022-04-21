@@ -1,9 +1,26 @@
 #!/bin/sh
 
+get_devkit_type()
+{
+    # Altera SOCFPGA Arria V SoC Development Kit   ==> ArriaV
+    # Altera SOCFPGA Cyclone V SoC Development Kit ==> CycloneV
+    # Altera SOCFPGA Arria 10 ==> Arria10
+    # SoCFPGA Stratix 10 SoCDK ==> 10SoCDK
+    # SoCFPGA Agilex SoCDK ==> Agilex SoCDK
+    cat /proc/device-tree/model | sed 's/Altera //' | cut -d ' ' -f 2-3 | tr -d ' '
+}
+
 LCD_DEVNODE=ttyLCD0
 SLEEP_TIME=
 SYS_DEVICES_SOC=
 
+machine_type="$(get_devkit_type)"
+echo "machine_type = $machine_type"
+
+if [ "$machine_type" == 'Stratix10' ] || [ "$machine_type" == 'AgilexSoCDK' ] || [ "$machine_type" == 'Arria10' ]; then
+        echo "LCD test is only  applicable for Cyclone5"
+        exit 1
+fi
 cd /sys/devices
 for foo in 'soc.0' 'soc' 'platform/soc'; do
     if [ -e "$foo" ]; then    
