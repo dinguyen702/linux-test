@@ -72,10 +72,19 @@ esac
    fi
 
    echo "clock rate of $MPU_CLK = $clk_rate"
-   if [ "$clk_rate" != "$mpu_clk" ]; then
-        echo "Error, incorrect clock rate. Expecting $mpu_clk"
-	status_fail=1
-        return
+   if [ "$machine_type" == 'AgilexSoCDK' ]; then
+	if [ "$clk_rate" != "$mpu_clk" ] && [ "$clk_rate" != "$MPU_RATE_AGILEX2" ]; then
+		echo "Error, incorrect clock rate. Expecting $mpu_clk"
+		echo "mpu_clk2 $MPU_RATE_AGILEX2"
+		status_fail=1
+		return
+	fi
+   else
+	if [ "$clk_rate" != "$mpu_clk" ]; then
+		echo "Error, incorrect clock rate. Expecting $mpu_clk"
+		status_fail=1
+		return
+	fi
    fi
 }
 
@@ -93,6 +102,7 @@ MPU_RATE_ARRIA5=1050000000
 MPU_RATE_ARRIA10=1200000000
 MPU_RATE_STRATIX10=1000000000
 MPU_RATE_AGILEX=1000000000
+MPU_RATE_AGILEX2=1200000000
 
 #===========================================================
 echo "Clock driver test"
